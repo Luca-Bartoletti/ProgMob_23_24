@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Better Path</string>
+    <string name="login_button">Accedi</string>
+    <string name="application_logo">application logo</string>
+</resources>

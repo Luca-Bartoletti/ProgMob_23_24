@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Better Path</string>
+    <string name="login_button">Login</string>
+    <string name="application_logo">application logo</string>
+</resources>
