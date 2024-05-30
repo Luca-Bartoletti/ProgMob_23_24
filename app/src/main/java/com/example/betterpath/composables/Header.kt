@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -39,7 +40,8 @@ fun Header(context: Context){
         modifier = Modifier
             .background(brush)
             .fillMaxWidth()
-            .height(96.dp),
+            .height(96.dp)
+            .systemBarsPadding(),
     ){
         Row(
             horizontalArrangement = Arrangement.Start

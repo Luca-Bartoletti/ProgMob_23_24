@@ -3,4 +3,6 @@
     <string name="app_name">Better Path</string>
     <string name="login_button">Accedi</string>
     <string name="application_logo">application logo</string>
+    <string name="registration_button">Registrati</string>
+    <string name="or_string">oppure</string>
 </resources>
