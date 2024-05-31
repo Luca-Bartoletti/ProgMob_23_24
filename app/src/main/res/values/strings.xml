@@ -1,7 +1,10 @@
 <resources>
-    <string name="app_name">Better Path</string>
+    <string name="app_name">BETTER PATH</string>
     <string name="login_button">Login</string>
     <string name="application_logo">application logo</string>
     <string name="registration_button">Register</string>
     <string name="or_string">or</string>
+    <string name="login_with_google">Login with Google</string>
+    <string name="history">History</string>
+    <string name="home">Home</string>
 </resources>

@@ -8,7 +8,7 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun AppNavigation(innerPadding : PaddingValues){
+fun AppNavigation(){
     val navController  = rememberNavController()
 
     NavHost(navController = navController, startDestination = "loginRoute"){
@@ -17,6 +17,7 @@ fun AppNavigation(innerPadding : PaddingValues){
         }
         navigation(startDestination = "mainScreen", route = "mainRoute") {
             composable("mainScreen") {HomeScreen(navController)}
+            composable("historyScreen") {HistoryScreen(navController)}
         }
     }
 }

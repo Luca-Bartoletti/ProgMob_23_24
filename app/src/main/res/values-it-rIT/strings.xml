@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Better Path</string>
+    <string name="app_name">BETTER PATH</string>
     <string name="login_button">Accedi</string>
     <string name="application_logo">application logo</string>
     <string name="registration_button">Registrati</string>
     <string name="or_string">oppure</string>
+    <string name="login_with_google">Accedi con Google</string>
+    <string name="history">Storico</string>
+    <string name="home">Home</string>
 </resources>
