@@ -35,7 +35,7 @@ import com.example.betterpath.R
 fun Header(isLogged : Boolean = true, context: Context = LocalContext.current){
     val brush = Brush.verticalGradient(
         colorStops = arrayOf(
-            0.0f to MaterialTheme.colorScheme.tertiary, //0.60f
+            0.60f to MaterialTheme.colorScheme.tertiary, //0.60f
             1f to MaterialTheme.colorScheme.background
         )
     )
@@ -110,7 +110,7 @@ fun CircleImage(resource: Int, contentDescription: String?){
     Image(
         painter = painterResource(id = resource),
         contentDescription = contentDescription,
-        contentScale = ContentScale.Fit,
+        contentScale = ContentScale.FillHeight,
         modifier = Modifier
             .padding(top = 8.dp, end = 8.dp, bottom = 8.dp)
             .clip(CircleShape)

@@ -53,12 +53,12 @@ fun Footer(navController: NavController? = null, context: Context = LocalContext
                         }
                     },
                     modifier = Modifier.padding(start = 32.dp, bottom = 32.dp),
-                    colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondary)
+                    colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary)
 
                 ) {
                     Text(
                         text = context.getString(R.string.home),
-                        color = MaterialTheme.colorScheme.onSecondary
+                        color = MaterialTheme.colorScheme.onPrimary
                     )
                 }
             }
@@ -70,11 +70,11 @@ fun Footer(navController: NavController? = null, context: Context = LocalContext
                         navController?.navigate("historyScreen")
                     },
                     modifier = Modifier.padding(end = 32.dp, bottom = 16.dp),
-                    colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondary)
+                    colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary)
                 ) {
                     Text(
                         text = context.getString(R.string.history),
-                        color = MaterialTheme.colorScheme.onSecondary
+                        color = MaterialTheme.colorScheme.onPrimary
                     )
                 }
             }

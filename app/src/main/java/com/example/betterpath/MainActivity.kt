@@ -14,7 +14,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            BetterPathTheme(darkTheme = true) {
+            BetterPathTheme(darkTheme = false) {
                     AppNavigation()
             }
         }
