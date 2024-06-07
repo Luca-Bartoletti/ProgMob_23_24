@@ -1,10 +1,14 @@
 <resources>
     <string name="app_name">BETTER PATH</string>
-    <string name="login_button">Login</string>
+    <string name="login_offline_button">Continue offline</string>
     <string name="application_logo">application logo</string>
     <string name="registration_button">Register</string>
     <string name="or_string">or</string>
     <string name="login_with_google">Login with Google</string>
     <string name="history">History</string>
     <string name="home">Home</string>
+    <string name="offline_note">If you chose to proceed offline you will be abel to login with your Google account every time in the future. This choice will not affect your experience with the app.</string>
+    <string name="compare">Compare</string>
+    <string name="path_info_date">Date</string>
+    <string name="path_info_distance">Distance</string>
 </resources>

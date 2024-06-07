@@ -9,65 +9,60 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.betterpath.R
+import com.example.betterpath.viewModel.HistoryViewModel
 
 @Composable
-fun HistoryScreen(navController: NavController? = null) {
+fun HistoryScreen(navController: NavController? = null, viewModel: HistoryViewModel? = null) {
 
     Scaffold(
         topBar = { Header() },
-        bottomBar = { Footer(navController = navController, historyButton = false) },
+        bottomBar = { Footer(navController = navController, homeButton = true, compareButton = true, viewModel = viewModel) },
 
         ) { innerPadding ->
-        HistoryContent(innerPadding)
+        HistoryContent(innerPadding, viewModel)
     }
 
 }
 @Composable
-fun HistoryContent(innerPadding: PaddingValues){
-    Column(
+fun HistoryContent(innerPadding: PaddingValues, viewModel: HistoryViewModel?){
+    val pathInfo = viewModel?.historyItem?.collectAsState()
+    LazyColumn(
         modifier = Modifier
             .selectableGroup()
-            .fillMaxSize()
+            .fillMaxWidth()
             .background(MaterialTheme.colorScheme.background)
-            .padding(innerPadding)
-            .verticalScroll(rememberScrollState()),
+            .padding(innerPadding),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val checkedBox = remember {
-            mutableStateOf(arrayOf(-1,-1))
+        items(pathInfo?.value?.size ?: 0){ index ->
+            val path = pathInfo?.value?.get(index)
+            InfoRow(id = path!!.id, viewModel = viewModel, distance = path.distance, data = path.date, pathInfo = path.pathInfo)
         }
-        val numberOfChecked = remember {
-            mutableIntStateOf(0)
-        }
-        for(i in 0..3)
-            InfoRow(i,numberOfChecked, checkedBox)
-
     }
 }
 
 
 @Composable
-fun InfoRow(id:Int, numberOfChecked: MutableState<Int>
-            , checkedBox: MutableState<Array<Int>>){
+fun InfoRow(id:Int, viewModel: HistoryViewModel?, distance: Int, data: String, pathInfo: String){
     Row (
         modifier = Modifier
             .padding(8.dp)
@@ -84,8 +79,8 @@ fun InfoRow(id:Int, numberOfChecked: MutableState<Int>
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.Start
         ) {
-            Text(text = "DATA : xx/xx/xxxx")
-            Text(text = "DISTANZA : X Km")
+            Text(text = stringResource(R.string.path_info_date) + " : $data")
+            Text(text = stringResource(R.string.path_info_distance) + " : $distance km")
         }
 
         Column(
@@ -100,7 +95,7 @@ fun InfoRow(id:Int, numberOfChecked: MutableState<Int>
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-                Text(text = "MAPPA")
+                Text(text = pathInfo)
             }
         }
 
@@ -113,38 +108,10 @@ fun InfoRow(id:Int, numberOfChecked: MutableState<Int>
             val isChecked = remember {
                 mutableStateOf(false)
             }
-            /**
-             * Blocco di codice che verifica se sia possibile selezionare l'elemento della lista
-             * aggiornando i valori di numberOfChecked e checkedBox in base al valore di isChecked.
-             * TODO: spostare nel model(?)
-             */
             Checkbox(
                 checked = isChecked.value,
                 onCheckedChange = {
-                    println(it)
-                    if(it && numberOfChecked.value < 2) {
-                        isChecked.value = true
-                        checkedBox.value[numberOfChecked.value] = id
-                        numberOfChecked.value++
-                        println(""+checkedBox.value[0] +" "+ checkedBox.value[1])
-                    }
-                    if (!it && numberOfChecked.value == 1){
-                        isChecked.value = false
-                        checkedBox.value[0] = -1
-                        numberOfChecked.value--
-                        println(""+checkedBox.value[0] +" "+ checkedBox.value[1])
-                    }
-                    if (!it && numberOfChecked.value == 2){
-                        isChecked.value = false
-                        if(checkedBox.value[1] == id) {
-                            checkedBox.value[1] = -1
-                        } else{
-                            checkedBox.value[0] = checkedBox.value[1]
-                            checkedBox.value[1] = -1
-                        }
-                        numberOfChecked.value--
-                        println(""+checkedBox.value[0] +" "+ checkedBox.value[1])
-                    }
+                    isChecked.value = viewModel?.updateCheckedBox(id, it) ?: false
                 })
         }
     }

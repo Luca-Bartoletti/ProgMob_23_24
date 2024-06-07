@@ -29,13 +29,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.betterpath.viewModel.HistoryViewModel
 
 @Composable
-fun HomeScreen(navController: NavController? = null) {
+fun HomeScreen(navController: NavController? = null, historyViewModel : HistoryViewModel? = null) {
     var isTracking by remember { mutableIntStateOf(0) }
     Scaffold(
         topBar = { Header() },
-        bottomBar = { Footer(navController = navController, homeButton = false) },
+        bottomBar = { Footer(navController = navController, historyButton = true, viewModel = historyViewModel) },
         floatingActionButton = {
             LargeFloatingActionButton(
                 onClick = { isTracking = (isTracking + 1) % 2 },
