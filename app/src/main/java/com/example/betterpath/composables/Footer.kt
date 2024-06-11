@@ -81,7 +81,7 @@ fun Footer(navController: NavController? = null, context: Context = LocalContext
             } else if(compareButton){
                 Button(
                     onClick = {
-                        //TODO
+                        navController?.navigate("compareScreen")
                     },
                     enabled = isCompareButtonEnabled,
                     modifier = Modifier.padding(end = 32.dp, bottom = 16.dp),

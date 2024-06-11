@@ -1,6 +1,5 @@
 package com.example.betterpath.composables
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -19,6 +18,7 @@ fun AppNavigation(historyModelView: HistoryViewModel){
         navigation(startDestination = "mainScreen", route = "mainRoute") {
             composable("mainScreen") {HomeScreen(navController, historyModelView)}
             composable("historyScreen") {HistoryScreen(navController, historyModelView)}
+            composable("compareScreen") {CompareScreen(navController)}
         }
     }
 }

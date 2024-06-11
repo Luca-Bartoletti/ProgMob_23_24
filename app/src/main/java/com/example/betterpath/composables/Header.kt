@@ -1,8 +1,10 @@
 package com.example.betterpath.composables
 
 import android.content.Context
+import android.service.autofill.OnClickAction
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,10 +31,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.betterpath.R
 
 @Composable
-fun Header(isLogged : Boolean = true, context: Context = LocalContext.current){
+fun Header(isLogged : Boolean = false, context: Context = LocalContext.current, navController: NavController){
     val brush = Brush.verticalGradient(
         colorStops = arrayOf(
             0.60f to MaterialTheme.colorScheme.tertiary, //0.60f
@@ -99,14 +102,21 @@ fun Header(isLogged : Boolean = true, context: Context = LocalContext.current){
             ) {
                 CircleImage(
                     resource = R.drawable.logo_ia,
-                    contentDescription = context.getString(R.string.application_logo)
+                    contentDescription = context.getString(R.string.application_logo),
+                    onClickAction = {
+                        navController.navigate("compareScreen"){
+//                            popUpTo("home"){
+//                                inclusive = true
+//                            }
+                        }
+                    }
                 )
             }
         }
     }
 }
 @Composable
-fun CircleImage(resource: Int, contentDescription: String?){
+fun CircleImage(resource: Int, contentDescription: String?, onClickAction: () -> Unit){
     Image(
         painter = painterResource(id = resource),
         contentDescription = contentDescription,
@@ -114,11 +124,12 @@ fun CircleImage(resource: Int, contentDescription: String?){
         modifier = Modifier
             .padding(top = 8.dp, end = 8.dp, bottom = 8.dp)
             .clip(CircleShape)
+            .clickable(onClick = onClickAction)
     )
 }
 
 @Preview(showBackground = true)
 @Composable
 fun HeaderPreview() {
-    Header(isLogged = true)
+    Header(isLogged = true, navController = NavController(context = LocalContext.current))
 }

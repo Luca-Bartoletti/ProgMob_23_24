@@ -26,6 +26,12 @@ class HistoryViewModel : ViewModel() {
         }
     }
 
+    fun resetCheckBoxValue(){
+        checkedBox.value = arrayOf(-1,-1)
+        numberOfChecked.intValue = 0
+        enableCompareButton.value = false
+    }
+
     fun updateCheckedBox(index: Int, value: Boolean) : Boolean {
         var result = false
         println(value)

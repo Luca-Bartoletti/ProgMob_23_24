@@ -29,13 +29,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.betterpath.viewModel.HistoryViewModel
 
 @Composable
 fun HomeScreen(navController: NavController? = null, historyViewModel : HistoryViewModel? = null) {
     var isTracking by remember { mutableIntStateOf(0) }
     Scaffold(
-        topBar = { Header() },
+        topBar = { Header(navController = navController!!) },
         bottomBar = { Footer(navController = navController, historyButton = true, viewModel = historyViewModel) },
         floatingActionButton = {
             LargeFloatingActionButton(
@@ -97,5 +98,6 @@ fun HomeContent(innerPadding : PaddingValues){
 @Preview
 @Composable
 fun HomeScreenPreview() {
-    HomeScreen()
+    val navController  = rememberNavController()
+    HomeScreen(navController = navController)
 }

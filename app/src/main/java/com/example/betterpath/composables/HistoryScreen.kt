@@ -33,7 +33,7 @@ import com.example.betterpath.viewModel.HistoryViewModel
 fun HistoryScreen(navController: NavController? = null, viewModel: HistoryViewModel? = null) {
 
     Scaffold(
-        topBar = { Header() },
+        topBar = { Header(navController = navController!!) },
         bottomBar = { Footer(navController = navController, homeButton = true, compareButton = true, viewModel = viewModel) },
 
         ) { innerPadding ->
@@ -53,6 +53,7 @@ fun HistoryContent(innerPadding: PaddingValues, viewModel: HistoryViewModel?){
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        viewModel?.resetCheckBoxValue()
         items(pathInfo?.value?.size ?: 0){ index ->
             val path = pathInfo?.value?.get(index)
             InfoRow(id = path!!.id, viewModel = viewModel, distance = path.distance, data = path.date, pathInfo = path.pathInfo)

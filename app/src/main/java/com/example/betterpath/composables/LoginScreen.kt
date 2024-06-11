@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -28,7 +29,7 @@ fun LoginScreen(navController: NavController){
     Column (
         Modifier.background(MaterialTheme.colorScheme.background)
     ){
-        Header(context = context)
+        Header(context = context, navController = navController)
         Column (
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -61,7 +62,7 @@ fun LoginScreen(navController: NavController){
 
             Text(
                 color = MaterialTheme.colorScheme.onBackground,
-                text = context.getString(R.string.or_string)
+                text = context.getString(R.string.or_string),
             )
 
 
@@ -90,7 +91,9 @@ fun LoginScreen(navController: NavController){
 
             Text(
                 color = MaterialTheme.colorScheme.onBackground,
-                text = stringResource(R.string.offline_note)
+                text = stringResource(R.string.offline_note),
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Justify
             )
 
         }
