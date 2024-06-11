@@ -1,11 +1,7 @@
 package com.example.betterpath.composables
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -46,9 +42,8 @@ fun HomeScreen(
 ) {
     var isTracking by remember { mutableIntStateOf(0) }
 
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
+    ScreenWithMenu(content =
+    {
         Scaffold(
             topBar = { Header(navController = navController, loginViewModel = loginViewModel) },
             bottomBar = {
@@ -79,24 +74,10 @@ fun HomeScreen(
                 }
             },
             floatingActionButtonPosition = FabPosition.Center,
+        ) { innerPadding -> HomeContent(innerPadding) }
+    }, loginViewModel = loginViewModel, navController = navController
+    )
 
-            ) { innerPadding ->
-            HomeContent(innerPadding)
-        }
-
-        AnimatedVisibility(
-            visible = loginViewModel.isMenuOpen.value,
-            enter = slideInHorizontally(
-                initialOffsetX = { fullWidth -> -fullWidth }
-            ),
-            exit = slideOutHorizontally(
-                targetOffsetX = { fullWidth -> -fullWidth }
-            )
-        ) {
-            MenuBar(viewModel = loginViewModel, navController = navController)
-        }
-
-    }
 
 }
 

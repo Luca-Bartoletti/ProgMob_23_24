@@ -34,14 +34,19 @@ import com.example.betterpath.viewModel.LoginViewModel
 @Composable
 fun HistoryScreen(navController: NavController, viewModel: HistoryViewModel? = null, loginViewModel: LoginViewModel) {
 
-    Scaffold(
-        topBar = { Header(navController = navController, loginViewModel = loginViewModel) },
-        bottomBar = { Footer(navController = navController, homeButton = true, compareButton = true, viewModel = viewModel) },
-
-        ) { innerPadding ->
-        HistoryContent(innerPadding, viewModel)
-    }
-
+    ScreenWithMenu(content = {
+        Scaffold(
+            topBar = { Header(navController = navController, loginViewModel = loginViewModel) },
+            bottomBar = {
+                Footer(
+                    navController = navController,
+                    homeButton = true,
+                    compareButton = true,
+                    viewModel = viewModel
+                )
+            },
+        ) { innerPadding -> HistoryContent(innerPadding, viewModel) }
+    }, navController = navController, loginViewModel = loginViewModel)
 }
 @Composable
 fun HistoryContent(innerPadding: PaddingValues, viewModel: HistoryViewModel?){

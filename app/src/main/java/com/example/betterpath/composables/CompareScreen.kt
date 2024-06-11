@@ -29,12 +29,12 @@ import com.example.betterpath.viewModel.LoginViewModel
 
 @Composable
 fun CompareScreen(navController: NavController, loginViewModel: LoginViewModel){
-    Scaffold(
-        topBar = { Header(navController = navController, loginViewModel = loginViewModel) },
-        bottomBar = { Spacer(modifier = Modifier.height(32.dp)) },
-        ) { innerPadding ->
-        CompareContent(innerPadding)
-    }
+    ScreenWithMenu(content = {
+        Scaffold(
+            topBar = { Header(navController = navController, loginViewModel = loginViewModel) },
+            bottomBar = { Spacer(modifier = Modifier.height(32.dp)) },
+        ) { innerPadding -> CompareContent(innerPadding) }
+    }, navController = navController, loginViewModel = loginViewModel)
 }
 
 @Composable
