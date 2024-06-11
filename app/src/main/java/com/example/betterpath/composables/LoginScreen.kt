@@ -22,25 +22,27 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.betterpath.R
+import com.example.betterpath.viewModel.LoginViewModel
 
 @Composable
-fun LoginScreen(navController: NavController){
+fun LoginScreen(navController: NavController, loginViewModel: LoginViewModel) {
     val context = LocalContext.current
-    Column (
+    Column(
         Modifier.background(MaterialTheme.colorScheme.background)
-    ){
-        Header(context = context, navController = navController)
-        Column (
+    ) {
+        Header(context = context, navController = navController, loginViewModel = loginViewModel)
+        Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 64.dp)
-        ){
+        ) {
 
             Button(
                 onClick = {
                     // TODO implementare API Google
+                    loginViewModel.login()
                     navController.navigate("mainRoute") {
                         popUpTo("loginRoute") {
                             inclusive = true
@@ -70,7 +72,6 @@ fun LoginScreen(navController: NavController){
 
             Button(
                 onClick = {
-                    // TODO implementare il controllo di username e password
                     navController.navigate("mainRoute") {
                         popUpTo("loginRoute") {
                             inclusive = true
@@ -104,5 +105,8 @@ fun LoginScreen(navController: NavController){
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
-    LoginScreen(navController = NavController(LocalContext.current))
+    LoginScreen(
+        navController = NavController(LocalContext.current),
+        loginViewModel = LoginViewModel()
+    )
 }

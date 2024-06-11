@@ -22,18 +22,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.betterpath.R
 import com.example.betterpath.viewModel.HistoryViewModel
+import com.example.betterpath.viewModel.LoginViewModel
 
 @Composable
-fun HistoryScreen(navController: NavController? = null, viewModel: HistoryViewModel? = null) {
+fun HistoryScreen(navController: NavController, viewModel: HistoryViewModel? = null, loginViewModel: LoginViewModel) {
 
     Scaffold(
-        topBar = { Header(navController = navController!!) },
+        topBar = { Header(navController = navController, loginViewModel = loginViewModel) },
         bottomBar = { Footer(navController = navController, homeButton = true, compareButton = true, viewModel = viewModel) },
 
         ) { innerPadding ->
@@ -122,5 +124,8 @@ fun InfoRow(id:Int, viewModel: HistoryViewModel?, distance: Int, data: String, p
 @Preview(showBackground = true)
 @Composable
 fun HistoryScreenPreview() {
-    HistoryScreen()
+    HistoryScreen(
+        navController = NavController(LocalContext.current),
+        loginViewModel = LoginViewModel()
+    )
 }

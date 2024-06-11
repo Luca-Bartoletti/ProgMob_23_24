@@ -1,7 +1,11 @@
 package com.example.betterpath.composables
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -26,57 +30,90 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.betterpath.viewModel.HistoryViewModel
+import com.example.betterpath.viewModel.LoginViewModel
 
 @Composable
-fun HomeScreen(navController: NavController? = null, historyViewModel : HistoryViewModel? = null) {
+fun HomeScreen(
+    navController: NavController,
+    historyViewModel: HistoryViewModel? = null,
+    loginViewModel: LoginViewModel
+) {
     var isTracking by remember { mutableIntStateOf(0) }
-    Scaffold(
-        topBar = { Header(navController = navController!!) },
-        bottomBar = { Footer(navController = navController, historyButton = true, viewModel = historyViewModel) },
-        floatingActionButton = {
-            LargeFloatingActionButton(
-                onClick = { isTracking = (isTracking + 1) % 2 },
-                modifier = Modifier
-                    .padding(bottom = 16.dp),
-                shape = CircleShape,
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary,
-                elevation = FloatingActionButtonDefaults.elevation(
-                    defaultElevation = 4.dp,
-                    pressedElevation = 8.dp
-                )
-            ) {
-                if (isTracking == 0) Icon(
-                    Icons.Default.PlayArrow,
-                    contentDescription = "play track button"
-                )
-                else Icon(Icons.Default.Close, contentDescription = "stop track button")
-            }
-        },
-        floatingActionButtonPosition = FabPosition.Center,
 
-        ) { innerPadding ->
-        HomeContent(innerPadding)
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Scaffold(
+            topBar = { Header(navController = navController, loginViewModel = loginViewModel) },
+            bottomBar = {
+                Footer(
+                    navController = navController,
+                    historyButton = true,
+                    viewModel = historyViewModel
+                )
+            },
+            floatingActionButton = {
+                LargeFloatingActionButton(
+                    onClick = { isTracking = (isTracking + 1) % 2 },
+                    modifier = Modifier
+                        .padding(bottom = 16.dp),
+                    shape = CircleShape,
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    elevation = FloatingActionButtonDefaults.elevation(
+                        defaultElevation = 4.dp,
+                        pressedElevation = 8.dp
+                    )
+                ) {
+                    if (isTracking == 0) Icon(
+                        Icons.Default.PlayArrow,
+                        contentDescription = "play track button"
+                    )
+                    else Icon(Icons.Default.Close, contentDescription = "stop track button")
+                }
+            },
+            floatingActionButtonPosition = FabPosition.Center,
+
+            ) { innerPadding ->
+            HomeContent(innerPadding)
+        }
+
+        AnimatedVisibility(
+            visible = loginViewModel.isMenuOpen.value,
+            enter = slideInHorizontally(
+                initialOffsetX = { fullWidth -> -fullWidth }
+            ),
+            exit = slideOutHorizontally(
+                targetOffsetX = { fullWidth -> -fullWidth }
+            )
+        ) {
+            MenuBar(viewModel = loginViewModel, navController = navController)
+        }
+
     }
 
 }
 
+
 @Composable
-fun HomeContent(innerPadding : PaddingValues){
+fun HomeContent(innerPadding: PaddingValues) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(innerPadding),
         verticalArrangement = Arrangement.Center
     ) {
-        Spacer(modifier = Modifier
-            .height(16.dp)
-            .weight(0.1f))
+        Spacer(
+            modifier = Modifier
+                .height(16.dp)
+                .weight(0.1f)
+        )
         Card(
             modifier = Modifier
                 .fillMaxSize()
@@ -89,15 +126,20 @@ fun HomeContent(innerPadding : PaddingValues){
                     .background(MaterialTheme.colorScheme.surface)
             )
         }
-        Spacer(modifier = Modifier
-            .height(16.dp)
-            .weight(0.3f))
+        Spacer(
+            modifier = Modifier
+                .height(16.dp)
+                .weight(0.3f)
+        )
     }
 }
 
 @Preview
 @Composable
 fun HomeScreenPreview() {
-    val navController  = rememberNavController()
-    HomeScreen(navController = navController)
+    rememberNavController()
+    HomeScreen(
+        navController = NavController(LocalContext.current),
+        loginViewModel = LoginViewModel()
+    )
 }

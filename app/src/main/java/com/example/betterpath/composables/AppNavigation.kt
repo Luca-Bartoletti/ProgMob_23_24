@@ -6,19 +6,20 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.example.betterpath.viewModel.HistoryViewModel
+import com.example.betterpath.viewModel.LoginViewModel
 
 @Composable
-fun AppNavigation(historyModelView: HistoryViewModel){
+fun AppNavigation(historyModelView: HistoryViewModel, loginViewModel: LoginViewModel){
     val navController  = rememberNavController()
 
     NavHost(navController = navController, startDestination = "loginRoute"){
         navigation(startDestination = "loginScreen", route = "loginRoute"){
-            composable("loginScreen") {LoginScreen(navController)}
+            composable("loginScreen") {LoginScreen(navController, loginViewModel)}
         }
         navigation(startDestination = "mainScreen", route = "mainRoute") {
-            composable("mainScreen") {HomeScreen(navController, historyModelView)}
-            composable("historyScreen") {HistoryScreen(navController, historyModelView)}
-            composable("compareScreen") {CompareScreen(navController)}
+            composable("mainScreen") {HomeScreen(navController, historyModelView, loginViewModel = loginViewModel)}
+            composable("historyScreen") {HistoryScreen(navController, historyModelView, loginViewModel)}
+            composable("compareScreen") {CompareScreen(navController, loginViewModel = loginViewModel)}
         }
     }
 }
