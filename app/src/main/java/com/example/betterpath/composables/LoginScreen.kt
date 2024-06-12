@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.betterpath.R
+import com.example.betterpath.repository.PreferenceRepository
 import com.example.betterpath.viewModel.LoginViewModel
 
 @Composable
@@ -72,6 +73,8 @@ fun LoginScreen(navController: NavController, loginViewModel: LoginViewModel) {
 
             Button(
                 onClick = {
+                    println("offline pressed")
+                    loginViewModel.saveUserFirstTime(false)
                     navController.navigate("mainRoute") {
                         popUpTo("loginRoute") {
                             inclusive = true
@@ -107,6 +110,6 @@ fun LoginScreen(navController: NavController, loginViewModel: LoginViewModel) {
 fun LoginScreenPreview() {
     LoginScreen(
         navController = NavController(LocalContext.current),
-        loginViewModel = LoginViewModel()
+        loginViewModel = LoginViewModel(PreferenceRepository(LocalContext.current))
     )
 }

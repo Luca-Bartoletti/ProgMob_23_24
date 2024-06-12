@@ -31,13 +31,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.betterpath.repository.PreferenceRepository
 import com.example.betterpath.viewModel.HistoryViewModel
 import com.example.betterpath.viewModel.LoginViewModel
 
 @Composable
 fun HomeScreen(
     navController: NavController,
-    historyViewModel: HistoryViewModel? = null,
+    historyViewModel: HistoryViewModel,
     loginViewModel: LoginViewModel
 ) {
     var isTracking by remember { mutableIntStateOf(0) }
@@ -50,7 +51,7 @@ fun HomeScreen(
                 Footer(
                     navController = navController,
                     historyButton = true,
-                    viewModel = historyViewModel
+                    historyViewModel = historyViewModel
                 )
             },
             floatingActionButton = {
@@ -121,6 +122,7 @@ fun HomeScreenPreview() {
     rememberNavController()
     HomeScreen(
         navController = NavController(LocalContext.current),
-        loginViewModel = LoginViewModel()
+        loginViewModel = LoginViewModel(PreferenceRepository(LocalContext.current)),
+        historyViewModel = HistoryViewModel()
     )
 }

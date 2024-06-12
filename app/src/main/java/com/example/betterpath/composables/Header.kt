@@ -30,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.betterpath.R
+import com.example.betterpath.repository.PreferenceRepository
 import com.example.betterpath.viewModel.LoginViewModel
 
 @Composable
@@ -110,5 +111,8 @@ fun CircleImage(resource: Int, contentDescription: String?, onClickAction: () ->
 @Preview(showBackground = true)
 @Composable
 fun HeaderPreview() {
-    Header(navController = NavController(context = LocalContext.current), loginViewModel = LoginViewModel())
+    val context = LocalContext.current
+    Header(navController = NavController(context), loginViewModel = LoginViewModel(
+        PreferenceRepository(context)
+    ))
 }

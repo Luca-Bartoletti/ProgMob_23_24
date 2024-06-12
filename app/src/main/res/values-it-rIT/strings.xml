@@ -12,4 +12,7 @@
     <string name="compare">Confronta</string>
     <string name="path_info_date">Data</string>
     <string name="path_info_distance">Distanza</string>
+    <string name="logout">Logout</string>
+    <string name="path_date">Data percorso</string>
+    <string name="distance">Distanza</string>
 </resources>

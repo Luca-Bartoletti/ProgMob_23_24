@@ -25,7 +25,7 @@ import com.example.betterpath.R
 import com.example.betterpath.viewModel.HistoryViewModel
 
 @Composable
-fun Footer(navController: NavController? = null, context: Context = LocalContext.current, viewModel: HistoryViewModel? = null,
+fun Footer(navController: NavController? = null, context: Context = LocalContext.current, historyViewModel: HistoryViewModel,
            homeButton : Boolean = false, historyButton : Boolean = false, compareButton: Boolean = false){
     val brush = Brush.verticalGradient(
         colorStops = arrayOf(
@@ -34,7 +34,7 @@ fun Footer(navController: NavController? = null, context: Context = LocalContext
         )
     )
 
-    val isCompareButtonEnabled = viewModel?.enableCompareButton?.value ?: false
+    val isCompareButtonEnabled = historyViewModel.enableCompareButton.value
     Row (
         modifier = Modifier
             .background(brush)
@@ -101,5 +101,5 @@ fun Footer(navController: NavController? = null, context: Context = LocalContext
 @Preview(showBackground = true)
 @Composable
 fun FooterPreview() {
-    Footer(homeButton = true, historyButton = true)
+    Footer(homeButton = true, historyButton = true, historyViewModel = HistoryViewModel())
 }

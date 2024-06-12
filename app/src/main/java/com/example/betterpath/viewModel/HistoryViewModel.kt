@@ -7,21 +7,24 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.betterpath.data.PathHistory
 import com.example.betterpath.repository.HistoryRepository
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 class HistoryViewModel : ViewModel() {
-    private var checkedBox = mutableStateOf(arrayOf(-1,-1))
+    var checkedBox = mutableStateOf(arrayOf(-1,-1))
+        private set
     private var numberOfChecked = mutableIntStateOf(0)
     var enableCompareButton = mutableStateOf(false)
         private set
 
-    val historyRepository : HistoryRepository = HistoryRepository()
+    private val historyRepository : HistoryRepository = HistoryRepository()
     var historyItem = MutableStateFlow<List<PathHistory>>(emptyList())
         private set
 
     init {
         viewModelScope.launch {
+            delay(2000)
             historyItem.value = historyRepository.getSamplePath()
         }
     }
@@ -67,27 +70,16 @@ class HistoryViewModel : ViewModel() {
         return result
     }
 
+    fun fetchFirstPath() : PathHistory?{
+        println(checkedBox.value[0])
+        return if (checkedBox.value[0] != -1) historyItem.value[checkedBox.value[0]]
+        else null
+    }
+
+    fun fetchSecondPath() : PathHistory?{
+        println(checkedBox.value[1])
+        return if (checkedBox.value[1] != -1) historyItem.value[checkedBox.value[1]]
+        else null
+    }
+
 }
-
-/*
- var celestialBodies = MutableStateFlow<List<CelestialBody>>(emptyList())
-        private set
-    val selectedCelestialBody = MutableStateFlow<CelestialBody?>(null)
-
-    val repository: SpaceRepository = SpaceRepository()
-
-    init {
-        viewModelScope.launch {
-            celestialBodies.value = repository.getCelestialBodies()
-        }
-    }
-
-
-    fun fetchCelestialBodyById(id: Int) = viewModelScope.launch {
-        delay(1000)
-
-        val body = celestialBodies.value.find { it.id == id }
-
-        selectedCelestialBody.value = body
-    }
- */

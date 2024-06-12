@@ -28,11 +28,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.betterpath.R
+import com.example.betterpath.repository.PreferenceRepository
 import com.example.betterpath.viewModel.HistoryViewModel
 import com.example.betterpath.viewModel.LoginViewModel
 
 @Composable
-fun HistoryScreen(navController: NavController, viewModel: HistoryViewModel? = null, loginViewModel: LoginViewModel) {
+fun HistoryScreen(navController: NavController, viewModel: HistoryViewModel, loginViewModel: LoginViewModel) {
+
+    if (navController.currentBackStackEntry?.destination?.route == "historyScreen")
+        viewModel.resetCheckBoxValue()
 
     ScreenWithMenu(content = {
         Scaffold(
@@ -42,15 +46,15 @@ fun HistoryScreen(navController: NavController, viewModel: HistoryViewModel? = n
                     navController = navController,
                     homeButton = true,
                     compareButton = true,
-                    viewModel = viewModel
+                    historyViewModel = viewModel
                 )
             },
         ) { innerPadding -> HistoryContent(innerPadding, viewModel) }
     }, navController = navController, loginViewModel = loginViewModel)
 }
 @Composable
-fun HistoryContent(innerPadding: PaddingValues, viewModel: HistoryViewModel?){
-    val pathInfo = viewModel?.historyItem?.collectAsState()
+fun HistoryContent(innerPadding: PaddingValues, viewModel: HistoryViewModel){
+    val pathInfo = viewModel.historyItem.collectAsState()
     LazyColumn(
         modifier = Modifier
             .selectableGroup()
@@ -60,10 +64,9 @@ fun HistoryContent(innerPadding: PaddingValues, viewModel: HistoryViewModel?){
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        viewModel?.resetCheckBoxValue()
-        items(pathInfo?.value?.size ?: 0){ index ->
-            val path = pathInfo?.value?.get(index)
-            InfoRow(id = path!!.id, viewModel = viewModel, distance = path.distance, data = path.date, pathInfo = path.pathInfo)
+        items(pathInfo.value.size){ index ->
+            val path = pathInfo.value[index]
+            InfoRow(id = path.id, viewModel = viewModel, distance = path.distance, data = path.date, pathInfo = path.pathInfo)
         }
     }
 }
@@ -129,8 +132,10 @@ fun InfoRow(id:Int, viewModel: HistoryViewModel?, distance: Int, data: String, p
 @Preview(showBackground = true)
 @Composable
 fun HistoryScreenPreview() {
+    val context = LocalContext.current
     HistoryScreen(
-        navController = NavController(LocalContext.current),
-        loginViewModel = LoginViewModel()
+        navController = NavController(context),
+        loginViewModel = LoginViewModel(PreferenceRepository(context)),
+        viewModel = HistoryViewModel()
     )
 }

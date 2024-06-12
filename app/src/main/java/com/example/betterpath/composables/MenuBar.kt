@@ -20,6 +20,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -29,10 +31,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.betterpath.R
+import com.example.betterpath.repository.PreferenceRepository
 import com.example.betterpath.viewModel.LoginViewModel
 
 @Composable
 fun MenuBar(viewModel: LoginViewModel, navController: NavController) {
+
+    val isUserLogged by viewModel.isLogged.collectAsState(initial = false)
 
     Column(
         modifier = Modifier
@@ -46,7 +51,7 @@ fun MenuBar(viewModel: LoginViewModel, navController: NavController) {
                 .systemBarsPadding()
                 .padding(top = 16.dp)
         ) {
-            if (viewModel.isLogged.value) {
+            if (isUserLogged) {
                 Icon(
                     imageVector = Icons.Filled.AccountCircle,
                     contentDescription = "Account image",
@@ -120,5 +125,7 @@ fun MenuBar(viewModel: LoginViewModel, navController: NavController) {
 @Preview(showBackground = true)
 @Composable
 fun MenuBarPreview() {
-    MenuBar(LoginViewModel(), navController = NavController(LocalContext.current) )
+    MenuBar(
+        LoginViewModel(PreferenceRepository(LocalContext.current)),
+        navController = NavController(LocalContext.current) )
 }

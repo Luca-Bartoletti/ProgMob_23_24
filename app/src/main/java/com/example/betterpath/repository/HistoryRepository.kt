@@ -25,4 +25,6 @@ class HistoryRepository {
         val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault(Locale.Category.FORMAT))
         return dateFormat.format(date!!)
     }
+
+
 }

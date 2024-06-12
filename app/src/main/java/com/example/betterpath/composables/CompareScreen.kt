@@ -1,5 +1,6 @@
 package com.example.betterpath.composables
 
+import androidx.activity.viewModels
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,24 +22,32 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.betterpath.R
+import com.example.betterpath.repository.PreferenceRepository
+import com.example.betterpath.viewModel.HistoryViewModel
 import com.example.betterpath.viewModel.LoginViewModel
 
 @Composable
-fun CompareScreen(navController: NavController, loginViewModel: LoginViewModel){
+fun CompareScreen(navController: NavController, loginViewModel: LoginViewModel, historyViewModel: HistoryViewModel){
     ScreenWithMenu(content = {
         Scaffold(
             topBar = { Header(navController = navController, loginViewModel = loginViewModel) },
             bottomBar = { Spacer(modifier = Modifier.height(32.dp)) },
-        ) { innerPadding -> CompareContent(innerPadding) }
+        ) { innerPadding -> CompareContent(innerPadding, historyViewModel = historyViewModel) }
     }, navController = navController, loginViewModel = loginViewModel)
 }
 
 @Composable
-fun CompareContent(innerPadding : PaddingValues, differenceValue:Float = 0.8f){
+fun CompareContent(innerPadding : PaddingValues, historyViewModel: HistoryViewModel){
+    val differenceValue = 0.8f
+    val path1 = historyViewModel.fetchFirstPath()
+    val path2 = historyViewModel.fetchSecondPath()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -65,6 +74,8 @@ fun CompareContent(innerPadding : PaddingValues, differenceValue:Float = 0.8f){
                 .weight(0.2f),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
+
+            // Percorso 1
             Column(modifier = Modifier
                 .weight(0.45f)
                 .border(1.dp, Color.Black)
@@ -77,10 +88,10 @@ fun CompareContent(innerPadding : PaddingValues, differenceValue:Float = 0.8f){
                     Icon(
                         modifier = Modifier.padding(horizontal = 4.dp),
                         imageVector = Icons.Filled.Info,
-                        contentDescription = "Account image",
+                        contentDescription = "color of Path 1",
                         tint = MaterialTheme.colorScheme.secondary,
                     )
-                        Text(text = "Data percorso 1")
+                        Text(text = stringResource(R.string.path_date) + " : " + path1?.date)
                 }
                 Row (
                     Modifier
@@ -88,11 +99,14 @@ fun CompareContent(innerPadding : PaddingValues, differenceValue:Float = 0.8f){
                         .weight(0.5f))
                 {
                     Text(modifier = Modifier.padding(horizontal = 4.dp),
-                        text = "Distanza percorsa: 5Km")
+                        text = stringResource(R.string.distance) + " : " + path1?.distance
+                    )
                 }
 
             }
             Spacer(modifier = Modifier.weight(0.05f))
+
+            // Percorso 2
             Column(modifier = Modifier
                 .weight(0.45f)
                 .border(1.dp, Color.Black)
@@ -108,7 +122,7 @@ fun CompareContent(innerPadding : PaddingValues, differenceValue:Float = 0.8f){
                         contentDescription = "Account image",
                         tint = MaterialTheme.colorScheme.surface,
                     )
-                    Text(text = "Data percorso 2")
+                    Text(text =stringResource(R.string.path_date) + " : " + path2?.date)
                 }
                 Row (
                     Modifier
@@ -116,7 +130,7 @@ fun CompareContent(innerPadding : PaddingValues, differenceValue:Float = 0.8f){
                         .weight(0.5f))
                 {
                     Text(modifier = Modifier.padding(horizontal = 4.dp),
-                        text = "Distanza percorsa: 7Km")
+                        text = stringResource(R.string.distance) + " : " + path2?.distance)
                 }
             }
 
@@ -133,5 +147,6 @@ fun CompareContent(innerPadding : PaddingValues, differenceValue:Float = 0.8f){
 @Composable
 fun CompareScreenPreview() {
     val navController  = rememberNavController()
-    CompareScreen(navController = navController, loginViewModel = LoginViewModel())
+    CompareScreen(navController = navController, loginViewModel = LoginViewModel(PreferenceRepository(
+        LocalContext.current)), historyViewModel = HistoryViewModel())
 }

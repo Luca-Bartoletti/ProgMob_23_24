@@ -12,4 +12,6 @@
     <string name="path_info_date">Date</string>
     <string name="path_info_distance">Distance</string>
     <string name="logout">Logout</string>
+    <string name="path_date">Path date</string>
+    <string name="distance">Distance</string>
 </resources>
