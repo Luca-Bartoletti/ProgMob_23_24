@@ -1,7 +1,8 @@
 package com.example.betterpath.composables
 
-import androidx.compose.foundation.background
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -12,28 +13,30 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material3.Card
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.example.betterpath.repository.PreferenceRepository
+import com.example.betterpath.BuildConfig
 import com.example.betterpath.viewModel.HistoryViewModel
 import com.example.betterpath.viewModel.LoginViewModel
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapUiSettings
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.rememberCameraPositionState
 
 @Composable
 fun HomeScreen(
@@ -96,22 +99,39 @@ fun HomeContent(innerPadding: PaddingValues) {
                 .height(16.dp)
                 .weight(0.1f)
         )
-        Card(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .weight(0.6f)
                 .padding(horizontal = 32.dp)
         ) {
-            Text(
-                text = "Content",
-                modifier = Modifier
-                    .background(MaterialTheme.colorScheme.surface)
-            )
+            DrawMap()
         }
         Spacer(
             modifier = Modifier
                 .height(16.dp)
                 .weight(0.3f)
+        )
+    }
+}
+
+@Composable
+fun DrawMap() {
+    val singapore = LatLng(1.35, 103.87)
+    val singaporeState = MarkerState(position = singapore)
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(singapore, 10f)
+    }
+
+    GoogleMap(
+        modifier = Modifier.fillMaxSize(),
+        cameraPositionState = cameraPositionState,
+        uiSettings = MapUiSettings(compassEnabled = false, zoomControlsEnabled = false)
+    ){
+        Marker(
+            state = singaporeState,
+            title = "Singapore",
+            snippet = "Marker in Singapore"
         )
     }
 }
