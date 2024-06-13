@@ -1,5 +1,13 @@
 package com.example.betterpath.data
 
-import java.util.Date
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-data class PathHistory(val id: Int, val distance: Int, val date: String, val pathInfo: String)
+@Entity
+data class PathHistory(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    val distance: Int,
+    val date: String,
+    val pathInfo: String
+)

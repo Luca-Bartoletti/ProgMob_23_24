@@ -14,11 +14,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,8 +48,12 @@ fun CompareScreen(navController: NavController, loginViewModel: LoginViewModel, 
 @Composable
 fun CompareContent(innerPadding : PaddingValues, historyViewModel: HistoryViewModel){
     val differenceValue = 0.8f
-    val path1 = historyViewModel.fetchFirstPath()
-    val path2 = historyViewModel.fetchSecondPath()
+    val path1 = historyViewModel.selectedPath1.collectAsState(null)
+    val path2 = historyViewModel.selectedPath2.collectAsState(null)
+
+    historyViewModel.fetchFirstPath()
+    historyViewModel.fetchSecondPath()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -80,28 +86,33 @@ fun CompareContent(innerPadding : PaddingValues, historyViewModel: HistoryViewMo
                 .weight(0.45f)
                 .border(1.dp, Color.Black)
             ){
-                Row (
-                    Modifier
-                        .fillMaxWidth()
-                        .weight(0.5f),
-                    verticalAlignment = Alignment.CenterVertically){
-                    Icon(
-                        modifier = Modifier.padding(horizontal = 4.dp),
-                        imageVector = Icons.Filled.Info,
-                        contentDescription = "color of Path 1",
-                        tint = MaterialTheme.colorScheme.secondary,
+                path1.value?.let {
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .weight(0.5f),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            modifier = Modifier.padding(horizontal = 4.dp),
+                            imageVector = Icons.Filled.Info,
+                            contentDescription = "color of Path 1",
+                            tint = MaterialTheme.colorScheme.secondary,
+                        )
+                        Text(text = stringResource(R.string.path_date) + " : " + path1.value!!.date)
+                    }
+                    Row(
+                        Modifier
+                            .fillMaxSize()
+                            .weight(0.5f)
                     )
-                        Text(text = stringResource(R.string.path_date) + " : " + path1?.date)
-                }
-                Row (
-                    Modifier
-                        .fillMaxSize()
-                        .weight(0.5f))
-                {
-                    Text(modifier = Modifier.padding(horizontal = 4.dp),
-                        text = stringResource(R.string.distance) + " : " + path1?.distance
-                    )
-                }
+                    {
+                        Text(
+                            modifier = Modifier.padding(horizontal = 4.dp),
+                            text = stringResource(R.string.distance) + " : " + path1.value!!.distance
+                        )
+                    }
+                } ?: CircularProgressIndicator()
 
             }
             Spacer(modifier = Modifier.weight(0.05f))
@@ -111,27 +122,33 @@ fun CompareContent(innerPadding : PaddingValues, historyViewModel: HistoryViewMo
                 .weight(0.45f)
                 .border(1.dp, Color.Black)
             ){
-                Row (
-                    Modifier
-                        .fillMaxWidth()
-                        .weight(0.5f),
-                    verticalAlignment = Alignment.CenterVertically){
-                    Icon(
-                        modifier = Modifier.padding(horizontal = 4.dp),
-                        imageVector = Icons.Filled.Info,
-                        contentDescription = "Account image",
-                        tint = MaterialTheme.colorScheme.surface,
+                path2.value?.let {
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .weight(0.5f),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            modifier = Modifier.padding(horizontal = 4.dp),
+                            imageVector = Icons.Filled.Info,
+                            contentDescription = "Account image",
+                            tint = MaterialTheme.colorScheme.surface,
+                        )
+                        Text(text = stringResource(R.string.path_date) + " : " + path2.value!!.date)
+                    }
+                    Row(
+                        Modifier
+                            .fillMaxSize()
+                            .weight(0.5f)
                     )
-                    Text(text =stringResource(R.string.path_date) + " : " + path2?.date)
-                }
-                Row (
-                    Modifier
-                        .fillMaxSize()
-                        .weight(0.5f))
-                {
-                    Text(modifier = Modifier.padding(horizontal = 4.dp),
-                        text = stringResource(R.string.distance) + " : " + path2?.distance)
-                }
+                    {
+                        Text(
+                            modifier = Modifier.padding(horizontal = 4.dp),
+                            text = stringResource(R.string.distance) + " : " + path2.value!!.distance
+                        )
+                    }
+                } ?: CircularProgressIndicator()
             }
 
         }
@@ -143,10 +160,10 @@ fun CompareContent(innerPadding : PaddingValues, historyViewModel: HistoryViewMo
     
 }
 
-@Preview
-@Composable
-fun CompareScreenPreview() {
-    val navController  = rememberNavController()
-    CompareScreen(navController = navController, loginViewModel = LoginViewModel(PreferenceRepository(
-        LocalContext.current)), historyViewModel = HistoryViewModel())
-}
+//@Preview
+//@Composable
+//fun CompareScreenPreview() {
+//    val navController  = rememberNavController()
+//    CompareScreen(navController = navController, loginViewModel = LoginViewModel(PreferenceRepository(
+//        LocalContext.current)), historyViewModel = HistoryViewModel())
+//}

@@ -116,13 +116,13 @@ fun HomeContent(innerPadding: PaddingValues) {
     }
 }
 
-@Preview
-@Composable
-fun HomeScreenPreview() {
-    rememberNavController()
-    HomeScreen(
-        navController = NavController(LocalContext.current),
-        loginViewModel = LoginViewModel(PreferenceRepository(LocalContext.current)),
-        historyViewModel = HistoryViewModel()
-    )
-}
+//@Preview
+//@Composable
+//fun HomeScreenPreview() {
+//    rememberNavController()
+//    HomeScreen(
+//        navController = NavController(LocalContext.current),
+//        loginViewModel = LoginViewModel(PreferenceRepository(LocalContext.current)),
+//        historyViewModel = HistoryViewModel()
+//    )
+//}

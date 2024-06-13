@@ -3,6 +3,7 @@ package com.example.betterpath.composables
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -11,8 +12,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -49,12 +60,30 @@ fun HistoryScreen(navController: NavController, viewModel: HistoryViewModel, log
                     historyViewModel = viewModel
                 )
             },
+            //todo rimuovere FAB post test
+            floatingActionButton = {
+                FloatingActionButton(
+                    onClick = { viewModel.addPathSample() },
+                    modifier = Modifier
+                        .padding(bottom = 16.dp),
+                    shape = CircleShape,
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    elevation = FloatingActionButtonDefaults.elevation(
+                        defaultElevation = 4.dp,
+                        pressedElevation = 8.dp
+                    )
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = "Add")
+                }
+            }
+
         ) { innerPadding -> HistoryContent(innerPadding, viewModel) }
     }, navController = navController, loginViewModel = loginViewModel)
 }
 @Composable
-fun HistoryContent(innerPadding: PaddingValues, viewModel: HistoryViewModel){
-    val pathInfo = viewModel.historyItem.collectAsState()
+fun HistoryContent(innerPadding: PaddingValues, viewModel: HistoryViewModel) {
+    val allPath = viewModel.pathHistory.collectAsState(null)
     LazyColumn(
         modifier = Modifier
             .selectableGroup()
@@ -64,12 +93,21 @@ fun HistoryContent(innerPadding: PaddingValues, viewModel: HistoryViewModel){
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        items(pathInfo.value.size){ index ->
-            val path = pathInfo.value[index]
-            InfoRow(id = path.id, viewModel = viewModel, distance = path.distance, data = path.date, pathInfo = path.pathInfo)
+        allPath.value?.let {
+            items(allPath.value!!.size) { index ->
+                val path = allPath.value!![index]
+                InfoRow(
+                    id = path.id,
+                    viewModel = viewModel,
+                    distance = path.distance,
+                    data = path.date,
+                    pathInfo = path.pathInfo
+                )
+            }
         }
     }
 }
+
 
 
 @Composable
@@ -129,13 +167,13 @@ fun InfoRow(id:Int, viewModel: HistoryViewModel?, distance: Int, data: String, p
 
 }
 
-@Preview(showBackground = true)
-@Composable
-fun HistoryScreenPreview() {
-    val context = LocalContext.current
-    HistoryScreen(
-        navController = NavController(context),
-        loginViewModel = LoginViewModel(PreferenceRepository(context)),
-        viewModel = HistoryViewModel()
-    )
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun HistoryScreenPreview() {
+//    val context = LocalContext.current
+//    HistoryScreen(
+//        navController = NavController(context),
+//        loginViewModel = LoginViewModel(PreferenceRepository(context)),
+//        viewModel = HistoryViewModel()
+//    )
+//}

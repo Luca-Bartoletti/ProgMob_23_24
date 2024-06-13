@@ -6,29 +6,56 @@ import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.betterpath.data.PathHistory
+import com.example.betterpath.database.MyAppDatabase
 import com.example.betterpath.repository.HistoryRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.time.LocalDate
+import kotlin.random.Random
 
-class HistoryViewModel : ViewModel() {
+class HistoryViewModel(database: MyAppDatabase) : ViewModel() {
+    //modifiche per Room
+    private var pathHistorydao = database.pathHistoryDao()
+    private val repository : HistoryRepository = HistoryRepository(this, pathHistorydao!!)
+    var pathHistory = repository.allPaths
+        private set
+    var selectedPath1 = repository.selectedPath1
+    var selectedPath2 = repository.selectedPath2
+
+    fun fetchPathById(id: Int){
+        repository.getSelectedPath(id)
+    }
+
+    fun addPathSample() {
+        repository.addPath(
+            PathHistory(
+                distance = 0,
+                date = LocalDate.now().plusDays(Random.nextInt(10).toLong()).toString(),
+                pathInfo = "sampleTest"
+            )
+        )
+    }
+
+
+
     var checkedBox = mutableStateOf(arrayOf(-1,-1))
         private set
     private var numberOfChecked = mutableIntStateOf(0)
     var enableCompareButton = mutableStateOf(false)
         private set
 
-    private val historyRepository : HistoryRepository = HistoryRepository()
+    private val historyRepository : HistoryRepository = HistoryRepository(this, pathHistorydao!!)
     var historyItem = MutableStateFlow<List<PathHistory>>(emptyList())
         private set
 
     init {
-        viewModelScope.launch {
-            delay(2000)
-            historyItem.value = historyRepository.getSamplePath()
-        }
+        repository.init()
     }
 
+    //logica CheckBox
     fun resetCheckBoxValue(){
         checkedBox.value = arrayOf(-1,-1)
         numberOfChecked.intValue = 0
@@ -70,16 +97,14 @@ class HistoryViewModel : ViewModel() {
         return result
     }
 
-    fun fetchFirstPath() : PathHistory?{
-        println(checkedBox.value[0])
-        return if (checkedBox.value[0] != -1) historyItem.value[checkedBox.value[0]]
-        else null
+    fun fetchFirstPath() {
+        if (checkedBox.value[0] != -1)
+            repository.getSelectedPath(checkedBox.value[0], 1)
     }
 
-    fun fetchSecondPath() : PathHistory?{
-        println(checkedBox.value[1])
-        return if (checkedBox.value[1] != -1) historyItem.value[checkedBox.value[1]]
-        else null
+    fun fetchSecondPath() {
+        if (checkedBox.value[1] != -1)
+            repository.getSelectedPath(checkedBox.value[1], 2)
     }
 
 }

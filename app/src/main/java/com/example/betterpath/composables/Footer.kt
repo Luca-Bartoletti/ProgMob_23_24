@@ -98,8 +98,8 @@ fun Footer(navController: NavController? = null, context: Context = LocalContext
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun FooterPreview() {
-    Footer(homeButton = true, historyButton = true, historyViewModel = HistoryViewModel())
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun FooterPreview() {
+//    Footer(homeButton = true, historyButton = true, historyViewModel = HistoryViewModel())
+//}
