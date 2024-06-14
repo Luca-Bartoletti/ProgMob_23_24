@@ -1,6 +1,5 @@
 package com.example.betterpath.composables
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,16 +26,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.betterpath.BuildConfig
 import com.example.betterpath.viewModel.HistoryViewModel
 import com.example.betterpath.viewModel.LoginViewModel
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.MapUiSettings
-import com.google.maps.android.compose.Marker
-import com.google.maps.android.compose.MarkerState
-import com.google.maps.android.compose.rememberCameraPositionState
 
 @Composable
 fun HomeScreen(
@@ -105,7 +96,7 @@ fun HomeContent(innerPadding: PaddingValues) {
                 .weight(0.6f)
                 .padding(horizontal = 32.dp)
         ) {
-            DrawMap()
+            GMaps()
         }
         Spacer(
             modifier = Modifier
@@ -115,26 +106,7 @@ fun HomeContent(innerPadding: PaddingValues) {
     }
 }
 
-@Composable
-fun DrawMap() {
-    val singapore = LatLng(1.35, 103.87)
-    val singaporeState = MarkerState(position = singapore)
-    val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(singapore, 10f)
-    }
 
-    GoogleMap(
-        modifier = Modifier.fillMaxSize(),
-        cameraPositionState = cameraPositionState,
-        uiSettings = MapUiSettings(compassEnabled = false, zoomControlsEnabled = false)
-    ){
-        Marker(
-            state = singaporeState,
-            title = "Singapore",
-            snippet = "Marker in Singapore"
-        )
-    }
-}
 
 //@Preview
 //@Composable
