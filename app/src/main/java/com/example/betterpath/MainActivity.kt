@@ -7,13 +7,17 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.betterpath.composables.AppNavigation
 import com.example.betterpath.database.MyAppDatabase
+import com.example.betterpath.repository.LocationRepository
 import com.example.betterpath.repository.PreferenceRepository
 import com.example.betterpath.ui.theme.BetterPathTheme
 import com.example.betterpath.viewModel.HistoryViewModel
+import com.example.betterpath.viewModel.LocationViewModel
 import com.example.betterpath.viewModel.LoginViewModel
 
 class MainActivity : ComponentActivity() {
@@ -25,6 +29,7 @@ class MainActivity : ComponentActivity() {
             val database = MyAppDatabase.getDatabase(this)
             this.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
             BetterPathTheme(darkTheme = false) {
+
                 val historyViewModel : HistoryViewModel by viewModels{
                     object : ViewModelProvider.Factory {
                         override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -40,7 +45,21 @@ class MainActivity : ComponentActivity() {
                 val loginViewModel : LoginViewModel by viewModels{
                     LoginViewModel.LoginViewModelFactory(PreferenceRepository(applicationContext))
                 }
-                AppNavigation(historyViewModel, loginViewModel)
+
+                val context = LocalContext.current
+                val locationViewModel: LocationViewModel by viewModels {
+                    object : ViewModelProvider.Factory {
+                        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                            if (modelClass.isAssignableFrom(LocationViewModel::class.java)) {
+                                @Suppress("UNCHECKED_CAST")
+                                return LocationViewModel(context, LocationRepository(this@MainActivity)) as T
+                            }
+                            throw IllegalArgumentException("Unknown ViewModel class")
+                        }
+                    }
+                }
+
+                AppNavigation(historyViewModel, loginViewModel, locationViewModel)
             }
         }
     }

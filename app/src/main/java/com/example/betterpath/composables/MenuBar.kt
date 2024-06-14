@@ -118,6 +118,12 @@ fun MenuBar(viewModel: LoginViewModel, navController: NavController) {
             )
         }
 
+        Button(
+            onClick = {navController.navigate("debugRoute")}
+        ) {
+            Text(text = "DEBUG")
+        }
+
     }
 
 }

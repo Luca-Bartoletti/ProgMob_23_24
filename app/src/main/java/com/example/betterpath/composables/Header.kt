@@ -83,11 +83,10 @@ fun Header(context: Context = LocalContext.current,
                     resource = R.drawable.logo_ia,
                     contentDescription = context.getString(R.string.application_logo),
                     onClickAction = {
-                        // TODO cambiare con home page a test finiti
-                        navController.navigate("compareScreen"){
-//                            popUpTo("home"){
-//                                inclusive = true
-//                            }
+                        navController.navigate("homeScreen"){
+                            popUpTo("home"){
+                                inclusive = true
+                            }
                         }
                     }
                 )
@@ -100,7 +99,7 @@ fun CircleImage(resource: Int, contentDescription: String?, onClickAction: () ->
     Image(
         painter = painterResource(id = resource),
         contentDescription = contentDescription,
-        contentScale = ContentScale.FillHeight,
+        contentScale = ContentScale.Fit,
         modifier = Modifier
             .padding(top = 8.dp, end = 8.dp, bottom = 8.dp)
             .clip(CircleShape)
