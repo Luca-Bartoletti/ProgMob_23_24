@@ -10,6 +10,6 @@ data class PathData (
     val id: Int = 0,
     val lat: Double,
     val lng :Double,
-    val time : String,
+    val time : Long,
     val pathHistoryId : Int
 )

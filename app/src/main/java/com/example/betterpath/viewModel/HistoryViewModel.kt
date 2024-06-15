@@ -2,28 +2,25 @@ package com.example.betterpath.viewModel
 
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.betterpath.data.PathHistory
 import com.example.betterpath.database.MyAppDatabase
 import com.example.betterpath.repository.HistoryRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import kotlin.random.Random
 
 class HistoryViewModel(database: MyAppDatabase) : ViewModel() {
     //modifiche per Room
-    private var pathHistorydao = database.pathHistoryDao()
-    private val repository : HistoryRepository = HistoryRepository(this, pathHistorydao!!)
+    private var pathHistoryDao = database.pathHistoryDao()
+    private val repository : HistoryRepository = HistoryRepository(this, pathHistoryDao!!)
     var pathHistory = repository.allPaths
         private set
     var selectedPath1 = repository.selectedPath1
     var selectedPath2 = repository.selectedPath2
+    var todayId = repository.todayID
 
     fun fetchPathById(id: Int){
         repository.getSelectedPath(id)
@@ -33,22 +30,16 @@ class HistoryViewModel(database: MyAppDatabase) : ViewModel() {
         repository.addPath(
             PathHistory(
                 distance = 0,
-                date = LocalDate.now().plusDays(Random.nextInt(10).toLong()).toString(),
-                pathInfo = "sampleTest"
+                date = LocalDate.now().plusDays(Random.nextInt(10).toLong()).toString()
             )
         )
     }
 
 
 
-    var checkedBox = mutableStateOf(arrayOf(-1,-1))
-        private set
+    private var checkedBox = mutableStateOf(arrayOf(-1,-1))
     private var numberOfChecked = mutableIntStateOf(0)
     var enableCompareButton = mutableStateOf(false)
-        private set
-
-    private val historyRepository : HistoryRepository = HistoryRepository(this, pathHistorydao!!)
-    var historyItem = MutableStateFlow<List<PathHistory>>(emptyList())
         private set
 
     init {
@@ -105,6 +96,10 @@ class HistoryViewModel(database: MyAppDatabase) : ViewModel() {
     fun fetchSecondPath() {
         if (checkedBox.value[1] != -1)
             repository.getSelectedPath(checkedBox.value[1], 2)
+    }
+
+    fun getTodayId(): Int {
+        return repository.todayID.value
     }
 
 }

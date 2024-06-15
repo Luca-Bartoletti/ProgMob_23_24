@@ -2,53 +2,36 @@ package com.example.betterpath.repository
 
 import android.util.Log
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.betterpath.data.PathHistory
 import com.example.betterpath.data.PathHistoryDao
 import com.example.betterpath.viewModel.HistoryViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.text.SimpleDateFormat
 import java.time.LocalDate
-import java.util.Date
-import java.util.Locale
-import java.util.concurrent.Executor
+import kotlin.random.Random
 
-class HistoryRepository(val historyViewModel: HistoryViewModel, val dao : PathHistoryDao) {
+class HistoryRepository(private val historyViewModel: HistoryViewModel, private val dao : PathHistoryDao) {
     var allPaths = dao.getAllPath()
     val selectedPath : MutableStateFlow<PathHistory?> = MutableStateFlow(null)
     val selectedPath1 : MutableStateFlow<PathHistory?> = MutableStateFlow(null)
     val selectedPath2 : MutableStateFlow<PathHistory?> = MutableStateFlow(null)
+    val todayID : MutableStateFlow<Int> = MutableStateFlow(-1)
 
     fun init(){
-//        historyViewModel.viewModelScope.launch {
-//            withContext(Dispatchers.IO){
-//                val list = listOf(
-//                    PathHistory(
-//                        distance = 0,
-//                        date = LocalDate.now().toString(),
-//                        pathInfo = "sample"),
-//                    PathHistory(
-//                        distance = 10,
-//                        date = LocalDate.now().plusDays(1).toString(),
-//                        pathInfo = "sample"),
-//                    PathHistory(
-//                        distance = 4,
-//                        date = LocalDate.now().plusDays(2).toString(),
-//                        pathInfo = "sample"),
-//                )
-//
-//                try {
-//                    dao.insertAll(list)
-//                } catch (e: Exception){
-//                    // Handle the exception
-//                    Log.e("ww", "Error inserting data: ${e.message}")
-//                }
-//            }
-//        }
+        val today = LocalDate.now().toString()
+        historyViewModel.viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                todayID.value = dao.getPathIdFromDate(today)
+                dao.insert(PathHistory(
+                    distance = 0,
+                    date = today
+                ))
+            }
+
+
+        }
     }
 
     fun getSelectedPath(id: Int, pathNumber: Int = 0) {
@@ -74,5 +57,6 @@ class HistoryRepository(val historyViewModel: HistoryViewModel, val dao : PathHi
             }
         }
     }
-
 }
+
+

@@ -8,6 +8,5 @@ data class PathHistory(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val distance: Int,
-    val date: String,
-    val pathInfo: String
+    val date: String
 )

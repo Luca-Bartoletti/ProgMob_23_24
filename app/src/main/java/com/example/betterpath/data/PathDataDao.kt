@@ -16,5 +16,6 @@ interface PathDataDao {
     suspend fun insertAll(list: List<PathData>)
 
     @Query("SELECT * FROM PathData WHERE pathHistoryId = :pathId")
-    fun getAllPathWithHistoryId(pathId :Int) : Flow<PathData?>
+    fun getAllPathWithHistoryId(pathId :Int) : List<PathData?>
+
 }

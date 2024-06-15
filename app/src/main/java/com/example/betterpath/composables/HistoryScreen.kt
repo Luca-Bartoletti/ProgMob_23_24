@@ -3,7 +3,6 @@ package com.example.betterpath.composables
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -15,15 +14,10 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -33,13 +27,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.betterpath.R
-import com.example.betterpath.repository.PreferenceRepository
 import com.example.betterpath.viewModel.HistoryViewModel
 import com.example.betterpath.viewModel.LoginViewModel
 
@@ -100,8 +91,7 @@ fun HistoryContent(innerPadding: PaddingValues, viewModel: HistoryViewModel) {
                     id = path.id,
                     viewModel = viewModel,
                     distance = path.distance,
-                    data = path.date,
-                    pathInfo = path.pathInfo
+                    data = path.date
                 )
             }
         }
@@ -111,7 +101,7 @@ fun HistoryContent(innerPadding: PaddingValues, viewModel: HistoryViewModel) {
 
 
 @Composable
-fun InfoRow(id:Int, viewModel: HistoryViewModel?, distance: Int, data: String, pathInfo: String){
+fun InfoRow(id:Int, viewModel: HistoryViewModel?, distance: Int, data: String){
     Row (
         modifier = Modifier
             .padding(8.dp)
@@ -122,7 +112,7 @@ fun InfoRow(id:Int, viewModel: HistoryViewModel?, distance: Int, data: String, p
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .weight(0.5f)
+                .weight(0.8f)
                 .padding(vertical = 4.dp)
                 .padding(start = 8.dp),
             verticalArrangement = Arrangement.Center,
@@ -135,23 +125,7 @@ fun InfoRow(id:Int, viewModel: HistoryViewModel?, distance: Int, data: String, p
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .weight(0.4f)
-                .padding(vertical = 4.dp),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Card(
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
-                Text(text = pathInfo)
-            }
-        }
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .weight(0.1f)
+                .weight(0.2f)
                 .padding(vertical = 4.dp)
         ) {
             val isChecked = remember {

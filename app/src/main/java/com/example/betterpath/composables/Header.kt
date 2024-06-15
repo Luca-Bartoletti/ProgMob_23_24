@@ -86,7 +86,7 @@ fun Header(context: Context = LocalContext.current,
                         if(backstackEntry?.route != "permissionsScreen") {
                             navController.navigate("homeScreen") {
                                 popUpTo("home") {
-                                    inclusive = true
+                                    inclusive = false
                                 }
                             }
                         }

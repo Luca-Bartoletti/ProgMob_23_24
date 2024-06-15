@@ -25,14 +25,37 @@ import androidx.lifecycle.LifecycleEventObserver
 import com.example.betterpath.viewModel.LocationViewModel
 
 @Composable
-fun LocationReaderDebug(locationViewModel: LocationViewModel){
-   val location = locationViewModel.locationData.collectAsState().value
+fun LocationReaderDebug(locationViewModel: LocationViewModel) {
+    val location = locationViewModel.locationData.collectAsState().value
+    val oldLocation = locationViewModel.fetchedLocationData.collectAsState().value
 
     Column(
         modifier = Modifier
             .systemBarsPadding()
             .fillMaxWidth()
     ) {
+        Text(text = "valori salvati in precedenza")
+        LazyColumn(
+            modifier = Modifier
+                .selectableGroup()
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(8.dp)
+                .weight(0.4f),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ){
+            items(oldLocation.size) { index ->
+                val path = oldLocation[index]
+                path?.let { LogRow(lat = path.lat, lng = path.lng) } ?: BasicTextField(
+                    value = "nessun dato disponibile al momento",
+                    onValueChange = {},
+                    readOnly = true
+                )
+
+            }
+        }
+
         Text(text = "Numero di dati registrtati ${location.size}")
 
         LazyColumn(
@@ -40,7 +63,8 @@ fun LocationReaderDebug(locationViewModel: LocationViewModel){
                 .selectableGroup()
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.background)
-                .padding(8.dp),
+                .padding(8.dp)
+                .weight(0.4f),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {

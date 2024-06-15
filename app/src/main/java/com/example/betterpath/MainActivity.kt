@@ -8,7 +8,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
@@ -56,7 +55,7 @@ class MainActivity : ComponentActivity() {
                         override fun <T : ViewModel> create(modelClass: Class<T>): T {
                             if (modelClass.isAssignableFrom(LocationViewModel::class.java)) {
                                 @Suppress("UNCHECKED_CAST")
-                                return LocationViewModel(context, LocationRepository(this@MainActivity)) as T
+                                return LocationViewModel(context, database!!, historyViewModel) as T
                             }
                             throw IllegalArgumentException("Unknown ViewModel class")
                         }
@@ -69,7 +68,10 @@ class MainActivity : ComponentActivity() {
                         println("EVENTO :: $event -- #eventi :: ${locationViewModel.locationData.value.size}")
                         if (event == Lifecycle.Event.ON_RESUME) {
                             if (locationViewModel.isTracking.value) locationViewModel.startLocationUpdates()
-                        } else if (event == Lifecycle.Event.ON_DESTROY)  locationViewModel.stopLocationUpdates()
+                        } else if (event == Lifecycle.Event.ON_DESTROY){
+                            locationViewModel.saveDataAndClear()
+                            locationViewModel.stopLocationUpdates()
+                        }
                     }
                     lifecycleOwner.lifecycle.addObserver(observer)
                     onDispose {

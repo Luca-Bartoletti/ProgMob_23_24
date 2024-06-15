@@ -6,13 +6,30 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import androidx.compose.runtime.collectAsState
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.viewModelScope
+import com.example.betterpath.data.PathData
+import com.example.betterpath.data.PathDataDao
+import com.example.betterpath.viewModel.LocationViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class LocationRepository(private val context: Context) {
-    private val locationManager : LocationManager
+class LocationRepository(
+    private val context: Context,
+    private val dao: PathDataDao,
+    private val locationViewModel: LocationViewModel,
+) {
+
+    private val locationManager: LocationManager
         = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
     private  val locationChannel = Channel<Location>(Channel.BUFFERED)
     val locationFlow : Flow<Location> = locationChannel.receiveAsFlow()
@@ -25,6 +42,9 @@ class LocationRepository(private val context: Context) {
         override fun onProviderEnabled(provider: String) {}
         override fun onProviderDisabled(provider: String) {}
     }
+
+    private val _fetchedData  = MutableStateFlow<List<PathData?>>(emptyList())
+    val fetchedData:StateFlow<List<PathData?>> = _fetchedData.asStateFlow()
 
     fun startLocationUpdates(){
         if (ActivityCompat.checkSelfPermission(
@@ -43,5 +63,27 @@ class LocationRepository(private val context: Context) {
     fun stopLocationUpdates() {
         locationManager.removeUpdates(locationListener)
         println("location repository : stop location")
+    }
+
+    fun saveData(values: List<Location?>, historyId: Int) {
+        locationViewModel.viewModelScope.launch {
+            val insertList = values.map { value ->
+                PathData(
+                    lat = value!!.latitude,
+                    lng = value.longitude,
+                    time = value.time,
+                    pathHistoryId = historyId
+                )
+            }
+            withContext(Dispatchers.IO) {
+                dao.insertAll(insertList)
+            }
+        }
+    }
+
+    fun getPathDataFromPathHistoryId(id:Int){
+        locationViewModel.viewModelScope.launch {
+            _fetchedData.value = dao.getAllPathWithHistoryId(id)
+        }
     }
 }
