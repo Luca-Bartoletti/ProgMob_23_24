@@ -60,7 +60,7 @@ fun Header(context: Context = LocalContext.current,
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxHeight()
             ) {
-                if (backstackEntry?.route != "loginScreen") {
+                if (backstackEntry?.route != "loginScreen"  && backstackEntry?.route != "permissionsScreen") {
                     Icon(
                         imageVector = Icons.Filled.Menu,
                         contentDescription = "Account image",
@@ -83,9 +83,11 @@ fun Header(context: Context = LocalContext.current,
                     resource = R.drawable.logo_ia,
                     contentDescription = context.getString(R.string.application_logo),
                     onClickAction = {
-                        navController.navigate("homeScreen"){
-                            popUpTo("home"){
-                                inclusive = true
+                        if(backstackEntry?.route != "permissionsScreen") {
+                            navController.navigate("homeScreen") {
+                                popUpTo("home") {
+                                    inclusive = true
+                                }
                             }
                         }
                     }

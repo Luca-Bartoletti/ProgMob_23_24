@@ -3,11 +3,16 @@ package com.example.betterpath.database
 import android.content.Context
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import com.example.betterpath.data.PathData
+import com.example.betterpath.data.PathDataDao
 import com.example.betterpath.data.PathHistory
 import com.example.betterpath.data.PathHistoryDao
 
 @Database(
-    entities = [PathHistory::class],
+    entities = [
+        PathHistory::class,
+        PathData::class
+    ],
     version = 1,
     // todo rimuovere
     exportSchema = false
@@ -15,6 +20,7 @@ import com.example.betterpath.data.PathHistoryDao
 
 abstract class MyAppDatabase : RoomDatabase() {
     abstract fun pathHistoryDao(): PathHistoryDao?
+    abstract fun pathDataDao(): PathDataDao?
 
     companion object {
         // marking the instance as volatile to ensure atomic access to the variable

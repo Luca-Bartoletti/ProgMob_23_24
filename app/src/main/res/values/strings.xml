@@ -14,5 +14,8 @@
     <string name="logout">Logout</string>
     <string name="path_date">Path date</string>
     <string name="distance">Distance</string>
-    <string name="title_activity_maps">MapsActivity</string>
+    <string name="title_activity_maps">Maps activity</string>
+    <string name="continue_text">Continue</string>
+    <string name="on_boarding">Onboarding</string>
+    <string name="permissions_explanation">The application needs you permissions for use your locations data. Please use de following form to authorize the application.</string>
 </resources>

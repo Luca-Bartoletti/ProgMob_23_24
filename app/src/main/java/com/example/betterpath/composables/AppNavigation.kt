@@ -14,24 +14,25 @@ import com.example.betterpath.viewModel.LoginViewModel
 @Composable
 fun AppNavigation(historyModelView: HistoryViewModel, loginViewModel: LoginViewModel, locationViewModel: LocationViewModel){
     val navController  = rememberNavController()
-    val isUserFirstTime by loginViewModel.isFirstTime.collectAsState(initial = true)
+
 
     NavHost(navController = navController, startDestination = "loadingScreen"){
+        navigation(startDestination = "logoScreen", route= "loadingScreen"){
+            composable("logoScreen") { LogoScreen(navController = navController,loginViewModel)}
+        }
+        navigation(startDestination = "permissionsScreen", route = "onboardingRoute"){
+            composable("permissionsScreen") { PermissionsScreen(navController = navController, locationViewModel = locationViewModel, loginViewModel=loginViewModel) }
+        }
         navigation(startDestination = "loginScreen", route = "loginRoute"){
             composable("loginScreen") {LoginScreen(navController, loginViewModel)}
-            composable("permissionScreen"){PermissionsScreen(locationViewModel, navController)}
         }
         navigation(startDestination = "mainScreen", route = "mainRoute") {
-            composable("mainScreen") {HomeScreen(navController, historyModelView, loginViewModel = loginViewModel)}
+            composable("mainScreen") {HomeScreen(navController, historyModelView, loginViewModel = loginViewModel, locationViewModel = locationViewModel)}
             composable("historyScreen") {HistoryScreen(navController, historyModelView, loginViewModel)}
             composable("compareScreen") {CompareScreen(navController, loginViewModel = loginViewModel, historyViewModel = historyModelView)}
         }
-        navigation(startDestination = "permissionsScreen", route="debugRoute"){
+        navigation(startDestination = "debugScreen", route="debugRoute"){
             composable("debugScreen") { LocationReaderDebug(locationViewModel = locationViewModel)}
-            composable("permissionsScreen"){ PermissionsScreen(locationViewModel = locationViewModel, navController)}
-        }
-        navigation(startDestination = "logoScreen", route= "loadingScreen"){
-            composable("logoScreen") { LogoScreen(navController = navController, if (isUserFirstTime) "loginRoute" else "mainRoute")}
         }
     }
 }

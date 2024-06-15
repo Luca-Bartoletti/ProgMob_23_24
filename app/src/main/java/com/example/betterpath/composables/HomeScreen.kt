@@ -19,23 +19,27 @@ import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.betterpath.viewModel.HistoryViewModel
+import com.example.betterpath.viewModel.LocationViewModel
 import com.example.betterpath.viewModel.LoginViewModel
 
 @Composable
 fun HomeScreen(
     navController: NavController,
     historyViewModel: HistoryViewModel,
-    loginViewModel: LoginViewModel
+    loginViewModel: LoginViewModel,
+    locationViewModel: LocationViewModel
 ) {
-    var isTracking by remember { mutableIntStateOf(0) }
+    val isTracking = locationViewModel.isTracking.collectAsState(initial = false)
 
     ScreenWithMenu(content =
     {
@@ -50,7 +54,10 @@ fun HomeScreen(
             },
             floatingActionButton = {
                 LargeFloatingActionButton(
-                    onClick = { isTracking = (isTracking + 1) % 2 },
+                    onClick = {
+                        if (isTracking.value) locationViewModel.stopLocationUpdates()
+                        else locationViewModel.startLocationUpdates()
+                    },
                     modifier = Modifier
                         .padding(bottom = 16.dp),
                     shape = CircleShape,
@@ -61,11 +68,10 @@ fun HomeScreen(
                         pressedElevation = 8.dp
                     )
                 ) {
-                    if (isTracking == 0) Icon(
-                        Icons.Default.PlayArrow,
-                        contentDescription = "play track button"
-                    )
-                    else Icon(Icons.Default.Close, contentDescription = "stop track button")
+                    if (isTracking.value)
+                        Icon(Icons.Default.Close, contentDescription = "stop track button")
+                    else
+                        Icon( Icons.Default.PlayArrow, contentDescription = "play track button")
                 }
             },
             floatingActionButtonPosition = FabPosition.Center,

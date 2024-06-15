@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
 import android.Manifest
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,19 +15,21 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class LocationViewModel (private val context: Context, private val locationRepository: LocationRepository) : ViewModel(){
-    private val _locationData = MutableStateFlow<Location?>(null)
+    private val _locationData = MutableStateFlow<List<Location?>>(emptyList())
     val locationData = _locationData.asStateFlow()
     var hasForeGroundPermission = MutableStateFlow(getForeGroundPermissionStatus())
         private set
     var hasBackGroundPermission = MutableStateFlow(getBackGroundPermissionStatus())
         private set
+    var isTracking = MutableStateFlow(false)
 
     init {
         viewModelScope.launch {
-            locationRepository.locationFlow.collect{
-                _locationData.value = it
+            locationRepository.locationFlow.collect{ newLocation ->
+                _locationData.value += newLocation
             }
         }
+
     }
 
     private fun getForeGroundPermissionStatus(): Boolean{
@@ -69,10 +72,14 @@ class LocationViewModel (private val context: Context, private val locationRepos
 
     fun startLocationUpdates(){
         locationRepository.startLocationUpdates()
+        isTracking.value = true
+        println("start tracking")
     }
 
     fun stopLocationUpdates(){
         locationRepository.stopLocationUpdates()
+        isTracking.value = false
+        println("stop Tracking")
     }
 
 }

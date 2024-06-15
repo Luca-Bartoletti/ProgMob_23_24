@@ -7,10 +7,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.betterpath.composables.AppNavigation
 import com.example.betterpath.database.MyAppDatabase
 import com.example.betterpath.repository.LocationRepository
@@ -56,6 +60,20 @@ class MainActivity : ComponentActivity() {
                             }
                             throw IllegalArgumentException("Unknown ViewModel class")
                         }
+                    }
+                }
+
+                val lifecycleOwner = LocalLifecycleOwner.current
+                DisposableEffect(lifecycleOwner) {
+                    val observer = LifecycleEventObserver { _, event ->
+                        println("EVENTO :: $event -- #eventi :: ${locationViewModel.locationData.value.size}")
+                        if (event == Lifecycle.Event.ON_RESUME) {
+                            if (locationViewModel.isTracking.value) locationViewModel.startLocationUpdates()
+                        } else if (event == Lifecycle.Event.ON_DESTROY)  locationViewModel.stopLocationUpdates()
+                    }
+                    lifecycleOwner.lifecycle.addObserver(observer)
+                    onDispose {
+                        lifecycleOwner.lifecycle.removeObserver(observer)
                     }
                 }
 

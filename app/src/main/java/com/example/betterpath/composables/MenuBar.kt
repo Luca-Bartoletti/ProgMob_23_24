@@ -35,9 +35,9 @@ import com.example.betterpath.repository.PreferenceRepository
 import com.example.betterpath.viewModel.LoginViewModel
 
 @Composable
-fun MenuBar(viewModel: LoginViewModel, navController: NavController) {
+fun MenuBar(loginViewModel: LoginViewModel, navController: NavController) {
 
-    val isUserLogged by viewModel.isLogged.collectAsState(initial = false)
+    val isUserLogged by loginViewModel.isLogged.collectAsState(initial = false)
 
     Column(
         modifier = Modifier
@@ -75,12 +75,13 @@ fun MenuBar(viewModel: LoginViewModel, navController: NavController) {
                     Spacer(modifier = Modifier.height(16.dp))
                     Button(
                         onClick = {
-                            viewModel.logout()
+                            loginViewModel.logout()
                             navController.navigate("loginRoute"){
                                 popUpTo("loginRoute"){
                                     inclusive = true
                                 }
                             }
+                            loginViewModel.closeMenu()
                         },
                         colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary)
                     ){
@@ -95,7 +96,8 @@ fun MenuBar(viewModel: LoginViewModel, navController: NavController) {
                     modifier = Modifier.padding(start = 8.dp),
                     onClick = {
                         // TODO implementare API Google
-                        viewModel.login()
+                        loginViewModel.login()
+                        loginViewModel.closeMenu()
                     },
                     colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary)
                 ) {
@@ -113,13 +115,16 @@ fun MenuBar(viewModel: LoginViewModel, navController: NavController) {
                     .padding(start = 8.dp)
                     .scale(1f)
                     .clickable {
-                        viewModel.closeMenu()
+                        loginViewModel.closeMenu()
                     }
             )
         }
 
         Button(
-            onClick = {navController.navigate("debugRoute")}
+            onClick = {
+                navController.navigate("debugRoute")
+                loginViewModel.closeMenu()
+            }
         ) {
             Text(text = "DEBUG")
         }

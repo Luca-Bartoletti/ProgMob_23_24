@@ -74,7 +74,6 @@ fun LoginScreen(navController: NavController, loginViewModel: LoginViewModel) {
             Button(
                 onClick = {
                     println("offline pressed")
-                    loginViewModel.saveUserFirstTime(false)
                     navController.navigate("mainRoute") {
                         popUpTo("loginRoute") {
                             inclusive = true

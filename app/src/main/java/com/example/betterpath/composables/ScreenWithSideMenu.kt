@@ -29,7 +29,7 @@ fun ScreenWithMenu(
                 targetOffsetX = { fullWidth -> -fullWidth }
             )
         ) {
-            MenuBar(viewModel = loginViewModel, navController = navController)
+            MenuBar(loginViewModel = loginViewModel, navController = navController)
         }
 
     }

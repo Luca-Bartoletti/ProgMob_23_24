@@ -35,8 +35,6 @@ class LocationRepository(private val context: Context) {
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            // TODO: Consider calling
-            // inserire rimando alla pagina di consenso
             return
         }
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0f, locationListener)
@@ -44,5 +42,6 @@ class LocationRepository(private val context: Context) {
 
     fun stopLocationUpdates() {
         locationManager.removeUpdates(locationListener)
+        println("location repository : stop location")
     }
 }

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.betterpath.R
+import com.example.betterpath.viewModel.LoginViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -27,12 +29,13 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
 @Composable
-fun LogoScreen(navController : NavController, nextRoute : String? = null){
-    nextRoute?.let {
-        val coroutineScope = rememberCoroutineScope()
+fun LogoScreen(navController : NavController,loginViewModel: LoginViewModel? = null,){
+
+    loginViewModel?.let {
+        val isUserFirstTime by loginViewModel.isFirstTime.collectAsState(initial = true)
         LaunchedEffect(Unit) {
             delay(1500)
-            navController.navigate(nextRoute)
+            navController.navigate(if (isUserFirstTime) "onboardingRoute" else "mainRoute")
         }
     }
 
