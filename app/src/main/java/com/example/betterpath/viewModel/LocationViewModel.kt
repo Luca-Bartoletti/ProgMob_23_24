@@ -9,7 +9,6 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.betterpath.database.MyAppDatabase
-import com.example.betterpath.repository.HistoryRepository
 import com.example.betterpath.repository.LocationRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -28,7 +27,7 @@ class LocationViewModel(
     var hasBackGroundPermission = MutableStateFlow(getBackGroundPermissionStatus())
         private set
     var isTracking = MutableStateFlow(false)
-    private var pathId: Int = historyViewModel.todayId.value
+    private var todayPathId: Int = historyViewModel.todayId.value
 
     private var pathDataDao = database.pathDataDao()
     private val locationRepository: LocationRepository = LocationRepository(
@@ -100,8 +99,14 @@ class LocationViewModel(
 
     fun saveDataAndClear() {
         if (_locationData.value.isNotEmpty()) {
-            locationRepository.saveData(_locationData.value, pathId)
+            locationRepository.saveData(_locationData.value, todayPathId)
             _locationData.value = emptyList()
+        }
+    }
+
+    fun getTodayPathData(){
+        viewModelScope.launch {
+            locationRepository.getPathDataFromPathHistoryId(todayPathId)
         }
     }
 

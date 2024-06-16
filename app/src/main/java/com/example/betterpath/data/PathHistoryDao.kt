@@ -24,4 +24,7 @@ interface PathHistoryDao {
 
     @Query("SELECT id FROM PathHistory WHERE date = :date")
     fun getPathIdFromDate(date : String): Int
+
+    @Query("SELECT * FROM PathHistory WHERE date = :date")
+    fun getPathFromDate(date: String) : PathHistory?
 }

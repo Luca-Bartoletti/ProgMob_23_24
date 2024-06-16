@@ -6,7 +6,6 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
-import androidx.compose.runtime.collectAsState
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.viewModelScope
 import com.example.betterpath.data.PathData
@@ -19,7 +18,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -83,7 +81,9 @@ class LocationRepository(
 
     fun getPathDataFromPathHistoryId(id:Int){
         locationViewModel.viewModelScope.launch {
-            _fetchedData.value = dao.getAllPathWithHistoryId(id)
+            withContext(Dispatchers.IO){
+                _fetchedData.value = dao.getAllPathWithHistoryId(id)
+            }
         }
     }
 }

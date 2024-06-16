@@ -1,6 +1,5 @@
 package com.example.betterpath.repository
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.betterpath.data.PathHistory
 import com.example.betterpath.data.PathHistoryDao
@@ -10,24 +9,30 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
-import kotlin.random.Random
 
 class HistoryRepository(private val historyViewModel: HistoryViewModel, private val dao : PathHistoryDao) {
     var allPaths = dao.getAllPath()
-    val selectedPath : MutableStateFlow<PathHistory?> = MutableStateFlow(null)
+    private val todayPath : MutableStateFlow<PathHistory?> = MutableStateFlow(null)
     val selectedPath1 : MutableStateFlow<PathHistory?> = MutableStateFlow(null)
     val selectedPath2 : MutableStateFlow<PathHistory?> = MutableStateFlow(null)
     val todayID : MutableStateFlow<Int> = MutableStateFlow(-1)
+
 
     fun init(){
         val today = LocalDate.now().toString()
         historyViewModel.viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 todayID.value = dao.getPathIdFromDate(today)
-                dao.insert(PathHistory(
-                    distance = 0,
-                    date = today
-                ))
+                todayPath.value = dao.getPathFromDate(today)
+                println("todayPath =  $todayPath -- todayPath.value = ${todayPath.value}")
+                if (todayPath.value == null) {
+                    dao.insert(
+                        PathHistory(
+                            distance = 0,
+                            date = today
+                        )
+                    )
+                }
             }
 
 
@@ -40,11 +45,10 @@ class HistoryRepository(private val historyViewModel: HistoryViewModel, private 
                 val pathFlow = dao.getPathById(id)
                 pathFlow.collect { path ->
                     when(pathNumber){
-                        0 -> selectedPath.value = path
+                        0 -> todayPath.value = path
                         1 -> selectedPath1.value = path
                         2 -> selectedPath2.value = path
                     }
-                    Log.i("TG", "selectedPath updated: $selectedPath")
                 }
             }
         }

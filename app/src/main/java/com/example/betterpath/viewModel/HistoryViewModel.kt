@@ -6,9 +6,6 @@ import androidx.lifecycle.ViewModel
 import com.example.betterpath.data.PathHistory
 import com.example.betterpath.database.MyAppDatabase
 import com.example.betterpath.repository.HistoryRepository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import kotlin.random.Random
 

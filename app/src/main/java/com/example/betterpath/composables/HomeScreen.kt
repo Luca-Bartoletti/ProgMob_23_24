@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
@@ -20,11 +21,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -40,6 +36,7 @@ fun HomeScreen(
     locationViewModel: LocationViewModel
 ) {
     val isTracking = locationViewModel.isTracking.collectAsState(initial = false)
+    val findingPosition = locationViewModel.locationData.collectAsState(null).value
 
     ScreenWithMenu(content =
     {
@@ -69,7 +66,10 @@ fun HomeScreen(
                     )
                 ) {
                     if (isTracking.value)
-                        Icon(Icons.Default.Close, contentDescription = "stop track button")
+                        findingPosition?.let {
+                            if (findingPosition.isEmpty())  CircularProgressIndicator()
+                            else Icon(Icons.Default.Close, contentDescription = "stop track button")
+                        } ?: CircularProgressIndicator()
                     else
                         Icon( Icons.Default.PlayArrow, contentDescription = "play track button")
                 }

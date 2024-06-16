@@ -1,19 +1,13 @@
 package com.example.betterpath.composables
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -22,14 +16,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.betterpath.R
 import com.example.betterpath.viewModel.LoginViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 
 @Composable
-fun LogoScreen(navController : NavController,loginViewModel: LoginViewModel? = null,){
+fun LogoScreen(navController : NavController,loginViewModel: LoginViewModel? = null){
 
     loginViewModel?.let {
         val isUserFirstTime by loginViewModel.isFirstTime.collectAsState(initial = true)
@@ -54,10 +44,6 @@ fun LogoScreen(navController : NavController,loginViewModel: LoginViewModel? = n
     }
 }
 
-suspend fun clock():Boolean{
-    delay(2000)
-    return true
-}
 
 @Preview(showBackground = true)
 @Composable

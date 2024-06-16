@@ -20,9 +20,6 @@ class LoginViewModel(private val repository: PreferenceRepository) : ViewModel()
         repository.setUserFirstTime(isFirstTime)
     }
 
-    init {
-    }
-
     fun login() = viewModelScope.launch {
         repository.setUserLoggedIn(true)
     }
