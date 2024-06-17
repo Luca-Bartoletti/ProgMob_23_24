@@ -19,4 +19,5 @@
     <string name="on_boarding">Onboarding</string>
     <string name="permissions_explanation">The application needs you permissions for use your locations data. Please use de following form to authorize the application.</string>
     <string name="localization_is_active">Localization is active</string>
+    <string name="no_data_today">There are no data about today\'s movement. Let\'s take a walk! And do not forget to press the start button below!</string>
 </resources>

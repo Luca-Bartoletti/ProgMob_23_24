@@ -24,13 +24,14 @@ class LocationViewModel(
     historyViewModel: HistoryViewModel
 ) : ViewModel() {
 
+
     // variabile per la raccolta dei dati dal sensore di LOCAZIONE
-    private val _locationData = MutableStateFlow<List<Location?>>(emptyList())
+    private val _locationData = MutableStateFlow<List<PathData?>>(emptyList())
     val locationData = _locationData.asStateFlow()
 
     //variabile per segnare la prima posizione dell'utente nota
-    private val _firstLocation = MutableStateFlow<Location?>(null)
-    val firstLocation = _firstLocation
+//    private val _firstLocation = MutableStateFlow<Location?>(null)
+//    val firstLocation = _firstLocation
 
     // Variabili per memorizzare se siano presenti i permessi espliciti per l'uso della posizione
     //da parte dell'utente
@@ -57,6 +58,7 @@ class LocationViewModel(
     // contenitore per i dati raccolti dal Repository.
     // Continene un lista di PathData?
     var fetchedLocationData = locationRepository.fetchedData
+        private set
 
     // per settare la dimensione della mappa sullo span del percorso tengo in memoria i valori
     // massimi e minimi di latitudine e longitudine raccolti
@@ -68,17 +70,23 @@ class LocationViewModel(
         private set
     var minLng: Double = Double.MAX_VALUE
         private set
+    private val _centerReady = MutableStateFlow(false)
+    var centerReady = _centerReady.asStateFlow()
 
     init {
         // dalla creazione di LocationViewModel fino alla sua distruzione vengono costantemente
         // letti i valori relativi alle posizioni ottenute dell'utente
         viewModelScope.launch {
             locationRepository.locationFlow.collect { newLocation ->
-                _locationData.value += newLocation
-                if(_firstLocation.value == null)
-                    _firstLocation.value = newLocation
+                _locationData.value += PathData(
+                    lat = newLocation.latitude,
+                    lng = newLocation.longitude,
+                    time = newLocation.time,
+                    pathHistoryId = todayPathId
+                )
             }
         }
+        locationRepository.fakeinsert()
 
     }
 
@@ -117,7 +125,7 @@ class LocationViewModel(
 
     override fun onCleared() {
         super.onCleared()
-        locationRepository.stopLocationUpdates()
+        stopLocationUpdates()
     }
 
     fun updateBackGroundPermissionStatus(hasPermission: Boolean) {
@@ -156,9 +164,8 @@ class LocationViewModel(
 
     fun saveDataAndClear() {
         if (_locationData.value.isNotEmpty()) {
-            locationRepository.saveData(_locationData.value, todayPathId)
+            locationRepository.saveData(_locationData.value)
             _locationData.value = emptyList()
-
         }
     }
 
@@ -169,6 +176,7 @@ class LocationViewModel(
     }
 
     fun getMaxMinLatLon(locationVals : List<PathData?>){
+        _centerReady.value = false
         viewModelScope.launch {
             withContext(Dispatchers.Default){
                 for (loc in locationVals){
@@ -180,6 +188,7 @@ class LocationViewModel(
                     }
                 }
             }
+                _centerReady.value = true
         }
     }
 

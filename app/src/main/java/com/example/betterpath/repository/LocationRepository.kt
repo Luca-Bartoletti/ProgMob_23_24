@@ -66,16 +66,10 @@ class LocationRepository(
         locationManager.removeUpdates(locationListener)
     }
 
-    fun saveData(values: List<Location?>, historyId: Int) {
+    fun saveData(values: List<PathData?>) {
         locationViewModel.viewModelScope.launch {
-            val insertList = values.map { value ->
-                PathData(
-                    lat = value!!.latitude,
-                    lng = value.longitude,
-                    time = value.time,
-                    pathHistoryId = historyId
-                )
-            }
+            val insertList = mutableListOf<PathData>()
+            for (value in values) value?.let { insertList += value }
             withContext(Dispatchers.IO) {
                 dao.insertAll(insertList)
             }
@@ -86,6 +80,21 @@ class LocationRepository(
         locationViewModel.viewModelScope.launch {
             withContext(Dispatchers.IO){
                 _fetchedData.value = dao.getAllPathWithHistoryId(id)
+            }
+        }
+    }
+
+    fun fakeinsert(){
+        locationViewModel.viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                dao.insert(
+                    PathData(
+                        lat = 45.03430535688004,
+                        lng =  7.632530504458783,
+                        pathHistoryId = 1,
+                        time = 1
+                    )
+                )
             }
         }
     }

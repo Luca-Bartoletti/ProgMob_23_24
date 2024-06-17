@@ -24,14 +24,15 @@ class HistoryRepository(private val historyViewModel: HistoryViewModel, private 
             withContext(Dispatchers.IO) {
                 todayID.value = dao.getPathIdFromDate(today)
                 todayPath.value = dao.getPathFromDate(today)
-                println("todayPath =  $todayPath -- todayPath.value = ${todayPath.value}")
                 if (todayPath.value == null) {
+                    println("todayPathID =  ${todayID.value} -- todayPath.value = ${todayPath.value}")
                     dao.insert(
                         PathHistory(
                             distance = 0,
                             date = today
                         )
                     )
+                    println("todayPathID =  ${todayID.value} -- todayPath.value = ${todayPath.value}")
                     todayID.value = dao.getPathIdFromDate(today)
                 }
             }

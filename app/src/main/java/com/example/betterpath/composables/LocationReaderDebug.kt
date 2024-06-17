@@ -86,7 +86,7 @@ fun MyCheck(locationViewModel: LocationViewModel){
 
             items(location.size) { index ->
                 val path = location[index]
-                path?.let { LogRow(lat = path.latitude, lng = path.longitude) } ?: BasicTextField(
+                path?.let { LogRow(lat = path.lat, lng = path.lng) } ?: BasicTextField(
                     value = "nessun dato disponibile al momento",
                     onValueChange = {},
                     readOnly = true

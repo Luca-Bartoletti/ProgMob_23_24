@@ -2,6 +2,7 @@ package com.example.betterpath.composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -49,7 +50,24 @@ fun MenuBar(loginViewModel: LoginViewModel, navController: NavController) {
             modifier = Modifier
                 .fillMaxWidth()
                 .systemBarsPadding()
-                .padding(top = 16.dp)
+                .padding(top = 32.dp),
+            horizontalArrangement = Arrangement.End
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Close,
+                contentDescription = "Close Menu",
+                tint = MaterialTheme.colorScheme.onTertiary,
+                modifier = Modifier
+                    .padding(end = 8.dp)
+                    .scale(1f)
+                    .clickable {
+                        loginViewModel.closeMenu()
+                    }
+            )
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
         ) {
             if (isUserLogged) {
                 Icon(
@@ -107,24 +125,14 @@ fun MenuBar(loginViewModel: LoginViewModel, navController: NavController) {
                     )
                 }
             }
-            Icon(
-                imageVector = Icons.Filled.Close,
-                contentDescription = "Close Menu",
-                tint = MaterialTheme.colorScheme.onTertiary,
-                modifier = Modifier
-                    .padding(start = 8.dp)
-                    .scale(1f)
-                    .clickable {
-                        loginViewModel.closeMenu()
-                    }
-            )
         }
 
         Button(
             onClick = {
                 navController.navigate("debugRoute")
                 loginViewModel.closeMenu()
-            }
+            },
+            modifier = Modifier.padding(start = 8.dp),
         ) {
             Text(text = "DEBUG")
         }
