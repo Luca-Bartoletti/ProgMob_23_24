@@ -18,4 +18,5 @@
     <string name="continue_text">Continue</string>
     <string name="on_boarding">Onboarding</string>
     <string name="permissions_explanation">The application needs you permissions for use your locations data. Please use de following form to authorize the application.</string>
+    <string name="localization_is_active">Localization is active</string>
 </resources>

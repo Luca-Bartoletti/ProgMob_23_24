@@ -55,7 +55,12 @@ class LocationRepository(
         ) {
             return
         }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0f, locationListener)
+        locationManager.requestLocationUpdates(
+            LocationManager.GPS_PROVIDER,
+            5000, 0f,
+            locationListener,
+        )
+        println("location repository : start location")
     }
 
     fun stopLocationUpdates() {

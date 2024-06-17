@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
 import androidx.navigation.NavController
 import com.example.betterpath.R
 import com.example.betterpath.viewModel.LocationViewModel
@@ -45,7 +46,6 @@ fun PermissionsScreen(locationViewModel: LocationViewModel, navController: NavCo
     val backGroundPermissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted : Boolean -> locationViewModel.updateBackGroundPermissionStatus(isGranted) }
-
 
     Column(
         modifier = Modifier

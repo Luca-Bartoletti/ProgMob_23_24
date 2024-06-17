@@ -72,6 +72,10 @@ dependencies {
     implementation(libs.play.services.maps)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
+    // todo check
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.play.services.location)
+    implementation(libs.androidx.runtime.livedata)
 
     testImplementation(libs.junit)
     testImplementation(libs.ui.test.junit4)

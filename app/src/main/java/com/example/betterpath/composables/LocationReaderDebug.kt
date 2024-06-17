@@ -19,10 +19,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.betterpath.viewModel.LocationViewModel
 
+
 @Composable
 fun LocationReaderDebug(locationViewModel: LocationViewModel) {
+    MyCheck(locationViewModel = locationViewModel)
+}
+
+@Composable
+fun MyCheck(locationViewModel: LocationViewModel){
     val location = locationViewModel.locationData.collectAsState().value
     val oldLocation = locationViewModel.fetchedLocationData.collectAsState().value
+    locationViewModel.getMaxMinLatLon(oldLocation)
 
     Column(
         modifier = Modifier
@@ -30,14 +37,28 @@ fun LocationReaderDebug(locationViewModel: LocationViewModel) {
             .fillMaxWidth()
     ) {
         Text(text = "valori salvati in precedenza")
+        Column(
+            modifier = Modifier
+                .selectableGroup()
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(8.dp)
+                .weight(0.2f),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ){
+            Text(text = "min Lat = ${locationViewModel.minLat}")
+            Text(text = "max Lat = ${locationViewModel.maxLat}")
+            Text(text = "min Lng = ${locationViewModel.minLng}")
+            Text(text = "max Lat = ${locationViewModel.maxLng}")
+
+        }
         LazyColumn(
             modifier = Modifier
                 .selectableGroup()
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.background)
                 .padding(8.dp)
-                .weight(0.4f),
-            verticalArrangement = Arrangement.Center,
+                .weight(0.2f),
             horizontalAlignment = Alignment.CenterHorizontally
         ){
             locationViewModel.getTodayPathData()
@@ -59,10 +80,8 @@ fun LocationReaderDebug(locationViewModel: LocationViewModel) {
                 .selectableGroup()
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.background)
-                .padding(8.dp)
+                .padding(16.dp)
                 .weight(0.4f),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
             items(location.size) { index ->

@@ -5,14 +5,23 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
 import android.Manifest
+import android.app.Application
+import android.content.Intent
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.betterpath.data.PathData
 import com.example.betterpath.database.MyAppDatabase
+import com.example.betterpath.foreground.ForegroundApp
+import com.example.betterpath.foreground.ForegroundLocation
 import com.example.betterpath.repository.LocationRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
 
 class LocationViewModel(
     private val context: Context,
@@ -20,23 +29,48 @@ class LocationViewModel(
     historyViewModel: HistoryViewModel
 ) : ViewModel() {
 
+    // variabile per la raccolta dei dati dal sensore di LOCAZIONE
     private val _locationData = MutableStateFlow<List<Location?>>(emptyList())
     val locationData = _locationData.asStateFlow()
+
+    // Variabili per memorizzare se siano presenti i permessi espliciti per l'uso della posizione
+    //da parte dell'utente
     var hasForeGroundPermission = MutableStateFlow(getForeGroundPermissionStatus())
         private set
     var hasBackGroundPermission = MutableStateFlow(getBackGroundPermissionStatus())
         private set
+
+    //variabile per tenere traccia dello stato di tracciamennto: attivo o meno
     var isTracking = MutableStateFlow(false)
+
+    // Identificativo del percorso odierno, necessario per le operazioni sui dati raccolti
+    // quali la rappresentazione a schermo ed il loro salvataggio
     private var todayPathId: Int = historyViewModel.todayId.value
 
+    // riferimenti a repository e Dao per le operazioni sui dati
     private var pathDataDao = database.pathDataDao()
     private val locationRepository: LocationRepository = LocationRepository(
         context = context, locationViewModel = this, dao = pathDataDao!!
     )
+
+    // contenitore per i dati raccolti dal Repository.
+    // Continene un lista di PathData?
     var fetchedLocationData = locationRepository.fetchedData
 
+    // per settare la dimensione della mappa sullo span del percorso tengo in memoria i valori
+    // massimi e minimi di latitudine e longitudine raccolti
+    var maxLat: Double = Double.MIN_VALUE
+        private set
+    var maxLng: Double = Double.MIN_VALUE
+        private set
+    var minLat: Double = Double.MAX_VALUE
+        private set
+    var minLng: Double = Double.MAX_VALUE
+        private set
 
     init {
+        // dalla creazione di LocationViewModel fino alla sua distruzione vengono constantemente
+        // letti i valori relativi alle posizioni ottenute dell'utente
         viewModelScope.launch {
             locationRepository.locationFlow.collect { newLocation ->
                 _locationData.value += newLocation
@@ -85,7 +119,9 @@ class LocationViewModel(
     }
 
     fun startLocationUpdates() {
+
         locationRepository.startLocationUpdates()
+
         isTracking.value = true
         println("start tracking")
     }
@@ -107,6 +143,21 @@ class LocationViewModel(
     fun getTodayPathData(){
         viewModelScope.launch {
             locationRepository.getPathDataFromPathHistoryId(todayPathId)
+        }
+    }
+
+    fun getMaxMinLatLon(locationVals : List<PathData?>){
+        viewModelScope.launch {
+            withContext(Dispatchers.Default){
+                for (loc in locationVals){
+                    loc?.let {
+                        if(loc.lat > maxLat) maxLat = loc.lat
+                        if(loc.lat < minLat) minLat = loc.lat
+                        if(loc.lng > maxLng) maxLng = loc.lng
+                        if(loc.lng < minLng) minLng = loc.lng
+                    }
+                }
+            }
         }
     }
 

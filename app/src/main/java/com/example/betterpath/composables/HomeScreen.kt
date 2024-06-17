@@ -1,5 +1,7 @@
 package com.example.betterpath.composables
 
+import android.app.Application
+import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,8 +24,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
+import com.example.betterpath.foreground.ForegroundApp
+import com.example.betterpath.foreground.ForegroundLocation
 import com.example.betterpath.viewModel.HistoryViewModel
 import com.example.betterpath.viewModel.LocationViewModel
 import com.example.betterpath.viewModel.LoginViewModel
@@ -37,6 +44,7 @@ fun HomeScreen(
 ) {
     val isTracking = locationViewModel.isTracking.collectAsState(initial = false)
     val findingPosition = locationViewModel.locationData.collectAsState(null).value
+    val context = LocalContext.current.applicationContext
 
     ScreenWithMenu(content =
     {
@@ -52,8 +60,22 @@ fun HomeScreen(
             floatingActionButton = {
                 LargeFloatingActionButton(
                     onClick = {
-                        if (isTracking.value) locationViewModel.stopLocationUpdates()
-                        else locationViewModel.startLocationUpdates()
+                        if (isTracking.value) {
+                            locationViewModel.stopLocationUpdates()
+
+                            Intent(context, ForegroundLocation::class.java).also {
+                                it.action = ForegroundLocation.Actions.START.toString()
+                                context.startService(it)
+                            }
+
+                        }
+                        else{
+                            locationViewModel.startLocationUpdates()
+                            Intent(context, ForegroundLocation::class.java).also {
+                                it.action = ForegroundLocation.Actions.STOP.toString()
+                                context.startService(it)
+                            }
+                        }
                     },
                     modifier = Modifier
                         .padding(bottom = 16.dp),
@@ -67,15 +89,15 @@ fun HomeScreen(
                 ) {
                     if (isTracking.value)
                         findingPosition?.let {
-                            if (findingPosition.isEmpty())  CircularProgressIndicator()
+                            if (findingPosition.isEmpty())  CircularProgressIndicator(modifier = Modifier, Color.Black)
                             else Icon(Icons.Default.Close, contentDescription = "stop track button")
-                        } ?: CircularProgressIndicator()
+                        } ?: CircularProgressIndicator(modifier = Modifier, Color.Black)
                     else
                         Icon( Icons.Default.PlayArrow, contentDescription = "play track button")
                 }
             },
             floatingActionButtonPosition = FabPosition.Center,
-        ) { innerPadding -> HomeContent(innerPadding) }
+        ) { innerPadding -> HomeContent(innerPadding, locationViewModel) }
     }, loginViewModel = loginViewModel, navController = navController
     )
 
@@ -84,7 +106,7 @@ fun HomeScreen(
 
 
 @Composable
-fun HomeContent(innerPadding: PaddingValues) {
+fun HomeContent(innerPadding: PaddingValues, locationViewModel: LocationViewModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -102,7 +124,10 @@ fun HomeContent(innerPadding: PaddingValues) {
                 .weight(0.6f)
                 .padding(horizontal = 32.dp)
         ) {
-            GMaps()
+            GMaps(
+                lng = (locationViewModel.maxLng + locationViewModel.maxLng)/2,
+                lat = (locationViewModel.maxLat + locationViewModel.maxLat)/2
+            )
         }
         Spacer(
             modifier = Modifier

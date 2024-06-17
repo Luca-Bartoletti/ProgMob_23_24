@@ -14,10 +14,10 @@ import com.google.maps.android.compose.rememberCameraPositionState
 
 @Composable
 fun GMaps(lat: Double = 45.09001835537128, lng: Double = 7.659142009974476) {
-    val university = LatLng(lat, lng)
-    val universityState = MarkerState(position = university)
+    val center = LatLng(lat, lng)
+    val centerMarker = MarkerState(position = center)
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(university, 15f)
+        position = CameraPosition.fromLatLngZoom(center, 15f)
     }
 
     GoogleMap(
@@ -26,7 +26,7 @@ fun GMaps(lat: Double = 45.09001835537128, lng: Double = 7.659142009974476) {
         uiSettings = MapUiSettings(compassEnabled = false, zoomControlsEnabled = false)
     ){
         Marker(
-            state = universityState,
+            state = centerMarker,
             title = "DiUnito",
             snippet = "Marker in DiUnito"
         )

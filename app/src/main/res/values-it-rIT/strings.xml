@@ -19,4 +19,5 @@
     <string name="continue_text">Continua</string>
     <string name="on_boarding">Benvenuto</string>
     <string name="permissions_explanation">L\'applicazione necessita dei tuoi permessi per accedere ai dati sulla tua posizione. Puoi usare il form sottostante dare la tua autorizzazione.</string>
+    <string name="localization_is_active">Localizzazione attiva</string>
 </resources>

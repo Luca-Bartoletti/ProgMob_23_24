@@ -25,7 +25,11 @@ fun LogoScreen(navController : NavController,loginViewModel: LoginViewModel? = n
         val isUserFirstTime by loginViewModel.isFirstTime.collectAsState(initial = true)
         LaunchedEffect(Unit) {
             delay(1500)
-            navController.navigate(if (isUserFirstTime) "onboardingRoute" else "mainRoute")
+            navController.navigate(if (isUserFirstTime) "onboardingRoute" else "mainRoute"){
+                popUpTo("logoScreen") {
+                    inclusive = true
+                }
+            }
         }
     }
 
