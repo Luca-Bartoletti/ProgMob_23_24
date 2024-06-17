@@ -22,7 +22,13 @@ import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -34,6 +40,8 @@ import com.example.betterpath.foreground.ForegroundLocation
 import com.example.betterpath.viewModel.HistoryViewModel
 import com.example.betterpath.viewModel.LocationViewModel
 import com.example.betterpath.viewModel.LoginViewModel
+import kotlinx.coroutines.delay
+import kotlin.math.log
 
 @Composable
 fun HomeScreen(
@@ -61,20 +69,18 @@ fun HomeScreen(
                 LargeFloatingActionButton(
                     onClick = {
                         if (isTracking.value) {
-                            locationViewModel.stopLocationUpdates()
-
-                            Intent(context, ForegroundLocation::class.java).also {
-                                it.action = ForegroundLocation.Actions.START.toString()
-                                context.startService(it)
-                            }
-
-                        }
-                        else{
-                            locationViewModel.startLocationUpdates()
                             Intent(context, ForegroundLocation::class.java).also {
                                 it.action = ForegroundLocation.Actions.STOP.toString()
                                 context.startService(it)
                             }
+                            locationViewModel.stopLocationUpdates()
+
+                        } else {
+                            Intent(context, ForegroundLocation::class.java).also {
+                                it.action = ForegroundLocation.Actions.START.toString()
+                                context.startService(it)
+                            }
+                            locationViewModel.startLocationUpdates()
                         }
                     },
                     modifier = Modifier
@@ -107,6 +113,14 @@ fun HomeScreen(
 
 @Composable
 fun HomeContent(innerPadding: PaddingValues, locationViewModel: LocationViewModel) {
+    val oldLocation = locationViewModel.fetchedLocationData.collectAsState().value
+    locationViewModel.getMaxMinLatLon(oldLocation)
+    var fetchingData by remember { mutableStateOf(true) }
+    LaunchedEffect(Unit) {
+        delay(2000)
+        fetchingData = false
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -124,10 +138,14 @@ fun HomeContent(innerPadding: PaddingValues, locationViewModel: LocationViewMode
                 .weight(0.6f)
                 .padding(horizontal = 32.dp)
         ) {
-            GMaps(
-                lng = (locationViewModel.maxLng + locationViewModel.maxLng)/2,
-                lat = (locationViewModel.maxLat + locationViewModel.maxLat)/2
-            )
+            if (fetchingData) CircularProgressIndicator()
+            else {
+                GMaps(
+                    centerLng = (locationViewModel.maxLng + locationViewModel.maxLng) / 2,
+                    centerLat = (locationViewModel.maxLat + locationViewModel.maxLat) / 2,
+                    markers = oldLocation
+                )
+            }
         }
         Spacer(
             modifier = Modifier

@@ -13,7 +13,6 @@ class ForegroundLocation : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        println("qqqui")
         when(intent?.action){
             Actions.START.toString() -> start()
             Actions.STOP.toString() -> stop()

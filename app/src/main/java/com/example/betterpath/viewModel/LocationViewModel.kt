@@ -1,20 +1,15 @@
 package com.example.betterpath.viewModel
 
+import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
-import android.Manifest
-import android.app.Application
-import android.content.Intent
-import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.betterpath.data.PathData
 import com.example.betterpath.database.MyAppDatabase
-import com.example.betterpath.foreground.ForegroundApp
-import com.example.betterpath.foreground.ForegroundLocation
 import com.example.betterpath.repository.LocationRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,6 +33,9 @@ class LocationViewModel(
     var hasForeGroundPermission = MutableStateFlow(getForeGroundPermissionStatus())
         private set
     var hasBackGroundPermission = MutableStateFlow(getBackGroundPermissionStatus())
+        private set
+
+    var hasNotificationPermission = MutableStateFlow(getNotificationPermissionStatus())
         private set
 
     //variabile per tenere traccia dello stato di tracciamennto: attivo o meno
@@ -101,6 +99,17 @@ class LocationViewModel(
         }
     }
 
+    private fun getNotificationPermissionStatus(): Boolean {
+        return if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            true
+        } else {
+           ContextCompat.checkSelfPermission(
+               context,
+               Manifest.permission.POST_NOTIFICATIONS
+           ) == PackageManager.PERMISSION_GRANTED
+        }
+    }
+
     override fun onCleared() {
         super.onCleared()
         locationRepository.stopLocationUpdates()
@@ -115,6 +124,12 @@ class LocationViewModel(
     fun updateForeGroundPermissionStatus(hasPermission: Boolean) {
         viewModelScope.launch {
             hasForeGroundPermission.value = hasPermission
+        }
+    }
+
+    fun updateNotificationPermissionStatus(hasPermission: Boolean){
+        viewModelScope.launch {
+            hasNotificationPermission.value = hasPermission
         }
     }
 

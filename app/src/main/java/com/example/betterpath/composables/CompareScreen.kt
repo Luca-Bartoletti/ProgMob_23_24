@@ -67,7 +67,7 @@ fun CompareContent(innerPadding : PaddingValues, historyViewModel: HistoryViewMo
                 .weight(0.5f)
                 .padding(vertical = 16.dp)
         ) {
-            GMaps()
+            //GMaps()
         }
 
         // informazioni sui percorsi comparati

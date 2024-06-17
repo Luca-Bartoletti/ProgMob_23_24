@@ -13,7 +13,7 @@ class ForegroundApp: Application() {
             val channel = NotificationChannel(
                 "better_path_channel",
                 "Better Path notifications",
-                NotificationManager.IMPORTANCE_HIGH //todo cambiare in low?
+                NotificationManager.IMPORTANCE_LOW //todo cambiare in low?
             )
             val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)

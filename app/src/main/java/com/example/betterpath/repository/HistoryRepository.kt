@@ -32,6 +32,7 @@ class HistoryRepository(private val historyViewModel: HistoryViewModel, private 
                             date = today
                         )
                     )
+                    todayID.value = dao.getPathIdFromDate(today)
                 }
             }
 

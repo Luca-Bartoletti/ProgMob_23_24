@@ -38,6 +38,7 @@ fun PermissionsScreen(locationViewModel: LocationViewModel, navController: NavCo
     //val context = LocalContext.current
     var foreGroundPermissionChecked by remember { mutableStateOf(false) }
     var backGroundPermissionChecked by remember { mutableStateOf(false) }
+    var notificationChecked by remember { mutableStateOf(false) }
 
     val foreGroundPermissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -46,6 +47,10 @@ fun PermissionsScreen(locationViewModel: LocationViewModel, navController: NavCo
     val backGroundPermissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted : Boolean -> locationViewModel.updateBackGroundPermissionStatus(isGranted) }
+
+    val notificationPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted : Boolean -> locationViewModel.updateNotificationPermissionStatus(isGranted) }
 
     Column(
         modifier = Modifier
@@ -56,7 +61,8 @@ fun PermissionsScreen(locationViewModel: LocationViewModel, navController: NavCo
     ) {
         Header(navController = navController, loginViewModel = loginViewModel)
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
                 .padding(8.dp)
         ) {
             Row (
@@ -75,10 +81,10 @@ fun PermissionsScreen(locationViewModel: LocationViewModel, navController: NavCo
             ){
                 Text(text = stringResource(R.string.permissions_explanation),
                     textAlign = TextAlign.Justify,
-                    color = MaterialTheme.colorScheme.onBackground)
+                    color = MaterialTheme.colorScheme.onBackground
+                )
             }
-
-            Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -119,6 +125,29 @@ fun PermissionsScreen(locationViewModel: LocationViewModel, navController: NavCo
                     }
                 )
             }
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(8.dp)
+            ){
+                Text(
+                    text = "Notification Permissions",
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+                Checkbox(
+                    checked = notificationChecked,
+                    onCheckedChange = { isChecked ->
+                        notificationChecked = isChecked
+                        if (isChecked){
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                    notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                                }
+                            }
+                        }
+                    }
+                )
+            }
             Row (
                 modifier = Modifier
                     .fillMaxWidth()
@@ -126,12 +155,18 @@ fun PermissionsScreen(locationViewModel: LocationViewModel, navController: NavCo
                 horizontalArrangement = Arrangement.End,
             ){
                 Button(
-                    enabled = foreGroundPermissionChecked && backGroundPermissionChecked,
+                    enabled = foreGroundPermissionChecked && backGroundPermissionChecked && notificationChecked,
                     onClick = {
-                        if(locationViewModel.hasForeGroundPermission.value && locationViewModel.hasBackGroundPermission.value)
+                        if (locationViewModel.hasForeGroundPermission.value && locationViewModel.hasBackGroundPermission.value && locationViewModel.hasNotificationPermission.value) {
                             loginViewModel.saveUserFirstTime(false)
-                            navController.navigate("loginRoute")
-                    }) {
+                            navController.navigate("loginRoute"){
+                                popUpTo("permissionScreen"){
+                                    inclusive = true
+                                }
+                            }
+                        }
+                    }
+                ) {
                     Text(text = stringResource(R.string.continue_text))
 
                 }

@@ -60,12 +60,10 @@ class LocationRepository(
             5000, 0f,
             locationListener,
         )
-        println("location repository : start location")
     }
 
     fun stopLocationUpdates() {
         locationManager.removeUpdates(locationListener)
-        println("location repository : stop location")
     }
 
     fun saveData(values: List<Location?>, historyId: Int) {
