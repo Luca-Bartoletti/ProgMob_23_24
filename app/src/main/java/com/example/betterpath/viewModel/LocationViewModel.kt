@@ -28,13 +28,16 @@ class LocationViewModel(
     private val _locationData = MutableStateFlow<List<Location?>>(emptyList())
     val locationData = _locationData.asStateFlow()
 
+    //variabile per segnare la prima posizione dell'utente nota
+    private val _firstLocation = MutableStateFlow<Location?>(null)
+    val firstLocation = _firstLocation
+
     // Variabili per memorizzare se siano presenti i permessi espliciti per l'uso della posizione
     //da parte dell'utente
     var hasForeGroundPermission = MutableStateFlow(getForeGroundPermissionStatus())
         private set
     var hasBackGroundPermission = MutableStateFlow(getBackGroundPermissionStatus())
         private set
-
     var hasNotificationPermission = MutableStateFlow(getNotificationPermissionStatus())
         private set
 
@@ -67,11 +70,13 @@ class LocationViewModel(
         private set
 
     init {
-        // dalla creazione di LocationViewModel fino alla sua distruzione vengono constantemente
+        // dalla creazione di LocationViewModel fino alla sua distruzione vengono costantemente
         // letti i valori relativi alle posizioni ottenute dell'utente
         viewModelScope.launch {
             locationRepository.locationFlow.collect { newLocation ->
                 _locationData.value += newLocation
+                if(_firstLocation.value == null)
+                    _firstLocation.value = newLocation
             }
         }
 
@@ -143,6 +148,7 @@ class LocationViewModel(
 
     fun stopLocationUpdates() {
         saveDataAndClear()
+        locationRepository.getPathDataFromPathHistoryId(todayPathId)
         locationRepository.stopLocationUpdates()
         isTracking.value = false
         println("stop Tracking")
@@ -152,6 +158,7 @@ class LocationViewModel(
         if (_locationData.value.isNotEmpty()) {
             locationRepository.saveData(_locationData.value, todayPathId)
             _locationData.value = emptyList()
+
         }
     }
 

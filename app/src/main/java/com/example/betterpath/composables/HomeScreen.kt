@@ -29,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -113,13 +114,8 @@ fun HomeScreen(
 
 @Composable
 fun HomeContent(innerPadding: PaddingValues, locationViewModel: LocationViewModel) {
+    val firstLocation = locationViewModel.firstLocation.collectAsState(null).value
     val oldLocation = locationViewModel.fetchedLocationData.collectAsState().value
-    locationViewModel.getMaxMinLatLon(oldLocation)
-    var fetchingData by remember { mutableStateOf(true) }
-    LaunchedEffect(Unit) {
-        delay(2000)
-        fetchingData = false
-    }
 
     Column(
         modifier = Modifier
@@ -136,16 +132,17 @@ fun HomeContent(innerPadding: PaddingValues, locationViewModel: LocationViewMode
             modifier = Modifier
                 .fillMaxSize()
                 .weight(0.6f)
-                .padding(horizontal = 32.dp)
+                .padding(horizontal = 32.dp),
+            contentAlignment = Alignment.Center
         ) {
-            if (fetchingData) CircularProgressIndicator()
-            else {
+            firstLocation?.let {
                 GMaps(
-                    centerLng = (locationViewModel.maxLng + locationViewModel.maxLng) / 2,
-                    centerLat = (locationViewModel.maxLat + locationViewModel.maxLat) / 2,
+                    centerLng = firstLocation.longitude,//(locationViewModel.maxLng + locationViewModel.maxLng) / 2,
+                    centerLat = firstLocation.latitude, //(locationViewModel.maxLat + locationViewModel.maxLat) / 2,
                     markers = oldLocation
                 )
-            }
+            } ?: CircularProgressIndicator(modifier = Modifier, Color.Black)
+
         }
         Spacer(
             modifier = Modifier

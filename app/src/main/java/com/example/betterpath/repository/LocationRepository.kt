@@ -57,7 +57,7 @@ class LocationRepository(
         }
         locationManager.requestLocationUpdates(
             LocationManager.GPS_PROVIDER,
-            5000, 0f,
+            10000, 0f,
             locationListener,
         )
     }
