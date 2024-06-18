@@ -109,12 +109,11 @@ fun HomeScreen(
 @Composable
 fun HomeContent(innerPadding: PaddingValues, locationViewModel: LocationViewModel) {
 
-    val todayFetchedLocation = locationViewModel.fetchedLocationData.collectAsState()
-    val todayNewLocation = locationViewModel.locationData.collectAsState()
+    val todayFetchedLocation = locationViewModel.fetchedLocationData.collectAsState(emptyList())
+    val todayNewLocation = locationViewModel.locationData.collectAsState(emptyList())
     val isCenterReady = locationViewModel.centerReady.collectAsState().value
 
     locationViewModel.getTodayPathData()
-    locationViewModel.getMaxMinLatLon(todayNewLocation.value + todayFetchedLocation.value)
 
     Column(
         modifier = Modifier
@@ -135,23 +134,30 @@ fun HomeContent(innerPadding: PaddingValues, locationViewModel: LocationViewMode
             contentAlignment = Alignment.Center
         ) {
             if( (todayFetchedLocation.value.isNotEmpty() || todayNewLocation.value.isNotEmpty()) && isCenterReady){
+              println("CHIAMO MAPS")
                 GMaps(
                     centerLng = (locationViewModel.maxLng + locationViewModel.maxLng) / 2,
                     centerLat = (locationViewModel.maxLat + locationViewModel.maxLat) / 2,
-                    markers = todayFetchedLocation.value + todayNewLocation.value
+                    points = todayFetchedLocation.value + todayNewLocation.value,
                 )
             }
             else {
                 // due casisitiche di interesse:
                 // 1) (todayFetchedLocation.value.isNotEmpty() || todayNewLocation.value.isNotEmpty() é falsa --> non ho dati da mostrare
                 // 2) Ho dati da mostrare ma non ho ancora calcolato il centro della mappa
-                if(todayFetchedLocation.value.isEmpty() && todayNewLocation.value.isEmpty())
+                if(todayFetchedLocation.value.isEmpty() && todayNewLocation.value.isEmpty()){
+                    println("NON CHIAMO MAPS PER LISTE VUOTE")
                     Text(
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center,
                         text = stringResource(R.string.no_data_today)
                     )
-                else CircularProgressIndicator(modifier = Modifier, Color.Black)
+                }
+                else {
+                    locationViewModel.getMaxMinLatLon(todayNewLocation.value + todayFetchedLocation.value)
+                    println("NON CHIAMO MAPS PER CENTRO NON CALCOLATO")
+                    CircularProgressIndicator(modifier = Modifier, Color.Black)
+                }
             }
 
 

@@ -13,8 +13,8 @@ import java.time.LocalDate
 class HistoryRepository(private val historyViewModel: HistoryViewModel, private val dao : PathHistoryDao) {
     var allPaths = dao.getAllPath()
     private val todayPath : MutableStateFlow<PathHistory?> = MutableStateFlow(null)
-    val selectedPath1 : MutableStateFlow<PathHistory?> = MutableStateFlow(null)
-    val selectedPath2 : MutableStateFlow<PathHistory?> = MutableStateFlow(null)
+    val selectedPathInfo1 : MutableStateFlow<PathHistory?> = MutableStateFlow(null)
+    val selectedPathInfo2 : MutableStateFlow<PathHistory?> = MutableStateFlow(null)
     val todayID : MutableStateFlow<Int> = MutableStateFlow(-1)
 
 
@@ -48,8 +48,8 @@ class HistoryRepository(private val historyViewModel: HistoryViewModel, private 
                 pathFlow.collect { path ->
                     when(pathNumber){
                         0 -> todayPath.value = path
-                        1 -> selectedPath1.value = path
-                        2 -> selectedPath2.value = path
+                        1 -> selectedPathInfo1.value = path
+                        2 -> selectedPathInfo2.value = path
                     }
                 }
             }

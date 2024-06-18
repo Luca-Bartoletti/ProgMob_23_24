@@ -3,7 +3,6 @@ package com.example.betterpath.viewModel
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import android.location.Location
 import android.os.Build
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
@@ -21,7 +20,7 @@ import kotlinx.coroutines.withContext
 class LocationViewModel(
     private val context: Context,
     database: MyAppDatabase,
-    historyViewModel: HistoryViewModel
+    private val historyViewModel: HistoryViewModel
 ) : ViewModel() {
 
 
@@ -60,6 +59,10 @@ class LocationViewModel(
     var fetchedLocationData = locationRepository.fetchedData
         private set
 
+    var fetchedLocationData2 = locationRepository.fetchedData2
+        private set
+
+
     // per settare la dimensione della mappa sullo span del percorso tengo in memoria i valori
     // massimi e minimi di latitudine e longitudine raccolti
     var maxLat: Double = Double.MIN_VALUE
@@ -70,8 +73,11 @@ class LocationViewModel(
         private set
     var minLng: Double = Double.MAX_VALUE
         private set
+
+    // verifico il corretto caricamento del centro della mappa
     private val _centerReady = MutableStateFlow(false)
     var centerReady = _centerReady.asStateFlow()
+
 
     init {
         // dalla creazione di LocationViewModel fino alla sua distruzione vengono costantemente
@@ -86,7 +92,6 @@ class LocationViewModel(
                 )
             }
         }
-        locationRepository.fakeinsert()
 
     }
 
@@ -173,6 +178,10 @@ class LocationViewModel(
         viewModelScope.launch {
             locationRepository.getPathDataFromPathHistoryId(todayPathId)
         }
+    }
+
+    fun getLocationData1And2(){
+        locationRepository.getLocation1And2(historyViewModel.checkedBox.value[0], historyViewModel.checkedBox.value[1])
     }
 
     fun getMaxMinLatLon(locationVals : List<PathData?>){

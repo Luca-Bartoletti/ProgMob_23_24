@@ -15,14 +15,15 @@ class HistoryViewModel(database: MyAppDatabase) : ViewModel() {
     private val repository : HistoryRepository = HistoryRepository(this, pathHistoryDao!!)
     var pathHistory = repository.allPaths
         private set
-    var selectedPath1 = repository.selectedPath1
-    var selectedPath2 = repository.selectedPath2
+    var selectedPathInfo1 = repository.selectedPathInfo1
+    var selectedPathInfo2 = repository.selectedPathInfo2
     var todayId = repository.todayID
 
     fun fetchPathById(id: Int){
         repository.getSelectedPath(id)
     }
 
+    // todo rimuovere
     fun addPathSample() {
         repository.addPath(
             PathHistory(
@@ -32,9 +33,8 @@ class HistoryViewModel(database: MyAppDatabase) : ViewModel() {
         )
     }
 
-
-
-    private var checkedBox = mutableStateOf(arrayOf(-1,-1))
+    var checkedBox = mutableStateOf(arrayOf(-1,-1))
+        private set
     private var numberOfChecked = mutableIntStateOf(0)
     var enableCompareButton = mutableStateOf(false)
         private set
@@ -88,6 +88,7 @@ class HistoryViewModel(database: MyAppDatabase) : ViewModel() {
     fun fetchFirstPath() {
         if (checkedBox.value[0] != -1)
             repository.getSelectedPath(checkedBox.value[0], 1)
+
     }
 
     fun fetchSecondPath() {

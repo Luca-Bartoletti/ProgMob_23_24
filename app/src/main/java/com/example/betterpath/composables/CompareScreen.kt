@@ -28,23 +28,33 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.betterpath.R
 import com.example.betterpath.viewModel.HistoryViewModel
+import com.example.betterpath.viewModel.LocationViewModel
 import com.example.betterpath.viewModel.LoginViewModel
 
 @Composable
-fun CompareScreen(navController: NavController, loginViewModel: LoginViewModel, historyViewModel: HistoryViewModel){
+fun CompareScreen(
+    navController: NavController,
+    loginViewModel: LoginViewModel,
+    historyViewModel: HistoryViewModel,
+    locationViewModel: LocationViewModel){
     ScreenWithMenu(content = {
         Scaffold(
             topBar = { Header(navController = navController, loginViewModel = loginViewModel) },
             bottomBar = { Spacer(modifier = Modifier.height(32.dp)) },
-        ) { innerPadding -> CompareContent(innerPadding, historyViewModel = historyViewModel) }
+        ) { innerPadding -> CompareContent(innerPadding, historyViewModel = historyViewModel, locationViewModel = locationViewModel) }
     }, navController = navController, loginViewModel = loginViewModel)
 }
 
 @Composable
-fun CompareContent(innerPadding : PaddingValues, historyViewModel: HistoryViewModel){
+fun CompareContent(innerPadding : PaddingValues, historyViewModel: HistoryViewModel, locationViewModel: LocationViewModel){
     val differenceValue = 0.8f
-    val path1 = historyViewModel.selectedPath1.collectAsState(null)
-    val path2 = historyViewModel.selectedPath2.collectAsState(null)
+    val path1 = historyViewModel.selectedPathInfo1.collectAsState(null)
+    val path2 = historyViewModel.selectedPathInfo2.collectAsState(null)
+
+    val pathData1 = locationViewModel.fetchedLocationData.collectAsState(emptyList())
+    val pathData2 = locationViewModel.fetchedLocationData2.collectAsState(emptyList())
+
+    locationViewModel.getLocationData1And2()
 
     historyViewModel.fetchFirstPath()
     historyViewModel.fetchSecondPath()
@@ -67,7 +77,14 @@ fun CompareContent(innerPadding : PaddingValues, historyViewModel: HistoryViewMo
                 .weight(0.5f)
                 .padding(vertical = 16.dp)
         ) {
-            //GMaps()
+            if (pathData1.value.isEmpty() && pathData2.value.isEmpty())
+                CircularProgressIndicator(color = Color.Black)
+            else
+                GMaps(
+                    points = pathData1.value,
+                    points2 = pathData2.value,
+                    numberOfPath = 2
+                )
         }
 
         // informazioni sui percorsi comparati

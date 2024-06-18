@@ -27,7 +27,7 @@ fun AppNavigation(historyModelView: HistoryViewModel, loginViewModel: LoginViewM
         navigation(startDestination = "mainScreen", route = "mainRoute") {
             composable("mainScreen") {HomeScreen(navController, historyModelView, loginViewModel = loginViewModel, locationViewModel = locationViewModel)}
             composable("historyScreen") {HistoryScreen(navController, historyModelView, loginViewModel)}
-            composable("compareScreen") {CompareScreen(navController, loginViewModel = loginViewModel, historyViewModel = historyModelView)}
+            composable("compareScreen") {CompareScreen(navController, loginViewModel = loginViewModel, historyViewModel = historyModelView, locationViewModel = locationViewModel)}
         }
         navigation(startDestination = "debugScreen", route="debugRoute"){
             composable("debugScreen") { LocationReaderDebug(locationViewModel = locationViewModel)}
