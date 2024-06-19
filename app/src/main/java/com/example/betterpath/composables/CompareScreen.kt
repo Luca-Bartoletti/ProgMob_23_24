@@ -54,7 +54,7 @@ fun CompareContent(innerPadding : PaddingValues, historyViewModel: HistoryViewMo
     val path1 = historyViewModel.selectedPathInfo1.collectAsState(null)
     val path2 = historyViewModel.selectedPathInfo2.collectAsState(null)
 
-    val differenceValue = locationViewModel.pathDifference.collectAsState(null)
+    val differenceValue = locationViewModel.pathDifference.collectAsState(0f)
     val pathData1 = locationViewModel.fetchedLocationData.collectAsState(emptyList())
     val pathData2 = locationViewModel.fetchedLocationData2.collectAsState(emptyList())
 
@@ -63,6 +63,9 @@ fun CompareContent(innerPadding : PaddingValues, historyViewModel: HistoryViewMo
     historyViewModel.fetchFirstPath()
     historyViewModel.fetchSecondPath()
 
+    if (pathData1.value.isEmpty() && pathData2.value.isEmpty())
+        locationViewModel.comparePaths()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -70,9 +73,10 @@ fun CompareContent(innerPadding : PaddingValues, historyViewModel: HistoryViewMo
             .padding(horizontal = 32.dp),
         verticalArrangement = Arrangement.Center
     ){
-        if (differenceValue.value != null) {
-            AnimatedLine(differenceValue.value!!)
-            AnimatedText(differenceValue.value!!)
+        if (differenceValue.value != 0f) {
+            println("Difference value = ${differenceValue.value}")
+            AnimatedLine(differenceValue.value)
+            AnimatedText(differenceValue.value)
         } else{
             AnimatedLine(0f)
             AnimatedText(0f)
@@ -88,15 +92,12 @@ fun CompareContent(innerPadding : PaddingValues, historyViewModel: HistoryViewMo
         ) {
             if (pathData1.value.isEmpty() && pathData2.value.isEmpty())
                 CircularProgressIndicator(color = Color.Black)
-            else {
-                locationViewModel.comparePaths()
-
+            else
                 GMaps(
                     points = pathData1.value,
                     points2 = pathData2.value,
                     numberOfPath = 2
                 )
-            }
         }
 
         // informazioni sui percorsi comparati

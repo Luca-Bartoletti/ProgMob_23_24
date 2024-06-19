@@ -17,6 +17,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.NumberFormat
+import java.util.Locale
 
 
 class LocationViewModel(
@@ -65,7 +67,7 @@ class LocationViewModel(
         private set
 
     // variabile che rappresenta la differenza tra due percorsi
-    var pathDifference = MutableStateFlow<Float?>(null)
+    var pathDifference = MutableStateFlow<Float>(0f)
         private set
 
 
@@ -211,7 +213,7 @@ class LocationViewModel(
     fun comparePaths(){
         viewModelScope.launch {
             withContext(Dispatchers.Default){
-                pathDifference.value = null
+                pathDifference.value = 0f
                 val list1 = getClusteredList(fetchedLocationData.value)
                 val list2 = getClusteredList(fetchedLocationData2.value)
                 pathDifference.value = countDifferentPoints(list1, list2)
@@ -219,22 +221,25 @@ class LocationViewModel(
         }
     }
 
-    @SuppressLint("DefaultLocale")
     private fun getClusteredList(list : List<PathData?>) : Set<LatLng>{
         val clusteredList = mutableSetOf<LatLng>()
-        var roundedLat = 0.0
-        var roundedLng = 0.0
+        val numericFormat = NumberFormat.getInstance()
+        var roundedLat: Double
+        var roundedLng :Double
+        val locale = Locale.ITALY
         for (data in list){
             data?.let {
-                roundedLat = String.format("%.3f", data.lat).toDouble()
-                roundedLng = String.format("%.3f", data.lng).toDouble()
+                val latStr = String.format(locale,"%.3f", data.lat)
+                val lngStr = String.format(locale,"%.3f", data.lng)
+                roundedLat = numericFormat.parse(latStr)?.toDouble() ?: 0.0
+                roundedLng = numericFormat.parse(lngStr)?.toDouble() ?: 0.0
                 clusteredList.add(LatLng(roundedLat, roundedLng))
             }
         }
         return clusteredList
     }
 
-    fun countDifferentPoints(set1: Set<LatLng>, set2: Set<LatLng>): Float {
+    private fun countDifferentPoints(set1: Set<LatLng>, set2: Set<LatLng>): Float {
         val allPoints = set1.union(set2)
         val commonPoints = set1.intersect(set2)
         return (allPoints.size.toFloat() - commonPoints.size.toFloat())/allPoints.size.toFloat()

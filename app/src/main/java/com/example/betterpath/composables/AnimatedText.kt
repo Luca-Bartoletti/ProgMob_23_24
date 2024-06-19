@@ -26,7 +26,7 @@ fun AnimatedText(targetValue: Float = 0.5f) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 16.dp),
-        text = "${animatedValue1.toInt()} %",
+        text = "$animatedValue1 %",
         textAlign = TextAlign.Center,
         style = MaterialTheme.typography.headlineLarge
     )
