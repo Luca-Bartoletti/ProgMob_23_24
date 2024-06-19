@@ -14,7 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun AnimatedLine(targetValue: Float = 0f) {
+fun AnimatedLine(targetValue: Float) {
     val animationProgress = remember { Animatable(0f) }
     val durationMillis = 3000  // Durata dell'animazione in millisecondi
 

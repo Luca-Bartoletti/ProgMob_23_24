@@ -27,4 +27,10 @@ interface PathHistoryDao {
 
     @Query("SELECT * FROM PathHistory WHERE date = :date")
     fun getPathFromDate(date: String) : PathHistory?
+
+    @Query("SELECT distance FROM PathHistory WHERE id = :id")
+    fun getDistanceById(id :Int) : Int
+
+    @Query("UPDATE PathHistory SET distance = :newDistance WHERE id= :pathId")
+    suspend fun updateDistance(pathId: Int, newDistance: Int)
 }

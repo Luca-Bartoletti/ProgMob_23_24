@@ -1,6 +1,7 @@
 package com.example.betterpath.viewModel
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
@@ -10,6 +11,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.betterpath.data.PathData
 import com.example.betterpath.database.MyAppDatabase
 import com.example.betterpath.repository.LocationRepository
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -58,8 +60,12 @@ class LocationViewModel(
     // Continene un lista di PathData?
     var fetchedLocationData = locationRepository.fetchedData
         private set
-
+    // supporta il precedente in caso sia necessario confrontare più percorsi in parallelo
     var fetchedLocationData2 = locationRepository.fetchedData2
+        private set
+
+    // variabile che rappresenta la differenza tra due percorsi
+    var pathDifference = MutableStateFlow<Float?>(null)
         private set
 
 
@@ -170,6 +176,7 @@ class LocationViewModel(
     fun saveDataAndClear() {
         if (_locationData.value.isNotEmpty()) {
             locationRepository.saveData(_locationData.value)
+            historyViewModel.updateDistance(_locationData.value)
             _locationData.value = emptyList()
         }
     }
@@ -199,6 +206,38 @@ class LocationViewModel(
             }
                 _centerReady.value = true
         }
+    }
+
+    fun comparePaths(){
+        viewModelScope.launch {
+            withContext(Dispatchers.Default){
+                pathDifference.value = null
+                val list1 = getClusteredList(fetchedLocationData.value)
+                val list2 = getClusteredList(fetchedLocationData2.value)
+                pathDifference.value = countDifferentPoints(list1, list2)
+            }
+        }
+    }
+
+    @SuppressLint("DefaultLocale")
+    private fun getClusteredList(list : List<PathData?>) : Set<LatLng>{
+        val clusteredList = mutableSetOf<LatLng>()
+        var roundedLat = 0.0
+        var roundedLng = 0.0
+        for (data in list){
+            data?.let {
+                roundedLat = String.format("%.3f", data.lat).toDouble()
+                roundedLng = String.format("%.3f", data.lng).toDouble()
+                clusteredList.add(LatLng(roundedLat, roundedLng))
+            }
+        }
+        return clusteredList
+    }
+
+    fun countDifferentPoints(set1: Set<LatLng>, set2: Set<LatLng>): Float {
+        val allPoints = set1.union(set2)
+        val commonPoints = set1.intersect(set2)
+        return (allPoints.size.toFloat() - commonPoints.size.toFloat())/allPoints.size.toFloat()
     }
 
 }

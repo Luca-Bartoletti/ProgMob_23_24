@@ -19,7 +19,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -47,10 +51,10 @@ fun CompareScreen(
 
 @Composable
 fun CompareContent(innerPadding : PaddingValues, historyViewModel: HistoryViewModel, locationViewModel: LocationViewModel){
-    val differenceValue = 0.8f
     val path1 = historyViewModel.selectedPathInfo1.collectAsState(null)
     val path2 = historyViewModel.selectedPathInfo2.collectAsState(null)
 
+    val differenceValue = locationViewModel.pathDifference.collectAsState(null)
     val pathData1 = locationViewModel.fetchedLocationData.collectAsState(emptyList())
     val pathData2 = locationViewModel.fetchedLocationData2.collectAsState(emptyList())
 
@@ -66,9 +70,14 @@ fun CompareContent(innerPadding : PaddingValues, historyViewModel: HistoryViewMo
             .padding(horizontal = 32.dp),
         verticalArrangement = Arrangement.Center
     ){
-        AnimatedLine(differenceValue)
+        if (differenceValue.value != null) {
+            AnimatedLine(differenceValue.value!!)
+            AnimatedText(differenceValue.value!!)
+        } else{
+            AnimatedLine(0f)
+            AnimatedText(0f)
+        }
 
-        AnimatedText(differenceValue)
 
 
         Box(
@@ -79,12 +88,15 @@ fun CompareContent(innerPadding : PaddingValues, historyViewModel: HistoryViewMo
         ) {
             if (pathData1.value.isEmpty() && pathData2.value.isEmpty())
                 CircularProgressIndicator(color = Color.Black)
-            else
+            else {
+                locationViewModel.comparePaths()
+
                 GMaps(
                     points = pathData1.value,
                     points2 = pathData2.value,
                     numberOfPath = 2
                 )
+            }
         }
 
         // informazioni sui percorsi comparati

@@ -63,6 +63,15 @@ class HistoryRepository(private val historyViewModel: HistoryViewModel, private 
             }
         }
     }
+
+    fun updateDistance(value: Int) {
+        historyViewModel.viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val oldDistance = dao.getDistanceById(todayID.value)
+                dao.updateDistance(todayID.value, oldDistance+value)
+            }
+        }
+    }
 }
 
 

@@ -15,6 +15,15 @@ class LoginViewModel(private val repository: PreferenceRepository) : ViewModel()
         private set
     val isFirstTime : Flow<Boolean> = repository.isUserFirstTimeFlow
 
+    class LoginViewModelFactory(private val repository : PreferenceRepository): ViewModelProvider.Factory{
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            if (modelClass.isAssignableFrom(LoginViewModel::class.java)) {
+                @Suppress("UNCHECKED_CAST")
+                return LoginViewModel(repository) as T
+            }
+            throw IllegalArgumentException("Unknown ViewModel class")
+        }
+    }
 
     fun saveUserFirstTime(isFirstTime: Boolean) = viewModelScope.launch {
         repository.setUserFirstTime(isFirstTime)
@@ -39,14 +48,5 @@ class LoginViewModel(private val repository: PreferenceRepository) : ViewModel()
         isMenuOpen.value = false
     }
 
-    class LoginViewModelFactory(private val repository : PreferenceRepository): ViewModelProvider.Factory{
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(LoginViewModel::class.java)) {
-                @Suppress("UNCHECKED_CAST")
-                return LoginViewModel(repository) as T
-            }
-            throw IllegalArgumentException("Unknown ViewModel class")
-        }
-    }
 
 }
