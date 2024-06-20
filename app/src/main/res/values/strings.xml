@@ -1,4 +1,5 @@
 <resources>
+    <string name="web_client_id" translatable="false">351457395257-ngiutaf89qqq21k21roi27ffeuislaeu.apps.googleusercontent.com</string>
     <string name="app_name">BETTER PATH</string>
     <string name="login_offline_button">Continue offline</string>
     <string name="application_logo">application logo</string>

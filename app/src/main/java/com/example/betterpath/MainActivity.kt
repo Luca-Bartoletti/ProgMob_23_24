@@ -16,15 +16,28 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.betterpath.composables.AppNavigation
 import com.example.betterpath.database.MyAppDatabase
+import com.example.betterpath.firebase_signIn.GoogleAuthUiClient
 import com.example.betterpath.repository.PreferenceRepository
 import com.example.betterpath.ui.theme.BetterPathTheme
 import com.example.betterpath.viewModel.HistoryViewModel
 import com.example.betterpath.viewModel.LocationViewModel
 import com.example.betterpath.viewModel.LoginViewModel
+import com.google.android.gms.auth.api.identity.Identity
 
 class MainActivity : ComponentActivity() {
+
+
+
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        val googleAuthUiClient by lazy {
+            GoogleAuthUiClient(
+                context = applicationContext,
+                oneTapClient = Identity.getSignInClient(applicationContext)
+            )
+        }
+
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         
@@ -46,7 +59,8 @@ class MainActivity : ComponentActivity() {
                 }
 
                 val loginViewModel : LoginViewModel by viewModels{
-                    LoginViewModel.LoginViewModelFactory(PreferenceRepository(applicationContext))
+                    LoginViewModel.LoginViewModelFactory(
+                        PreferenceRepository(applicationContext), googleAuthUiClient)
                 }
 
                 val context = LocalContext.current

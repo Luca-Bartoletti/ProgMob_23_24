@@ -37,17 +37,6 @@ class HistoryViewModel(database: MyAppDatabase) : ViewModel() {
         repository.getSelectedPath(id)
     }
 
-    // todo rimuovere
-    fun addPathSample() {
-        repository.addPath(
-            PathHistory(
-                distance = 0,
-                date = LocalDate.now().plusDays(Random.nextInt(10).toLong()).toString()
-            )
-        )
-    }
-
-
     init {
         repository.init()
     }

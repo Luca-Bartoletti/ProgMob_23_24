@@ -53,23 +53,22 @@ fun HistoryScreen(navController: NavController, viewModel: HistoryViewModel, log
                     locationViewModel = locationViewModel
                 )
             },
-            //todo rimuovere FAB post test
-            floatingActionButton = {
-                FloatingActionButton(
-                    onClick = { viewModel.addPathSample() },
-                    modifier = Modifier
-                        .padding(bottom = 16.dp),
-                    shape = CircleShape,
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
-                    elevation = FloatingActionButtonDefaults.elevation(
-                        defaultElevation = 4.dp,
-                        pressedElevation = 8.dp
-                    )
-                ) {
-                    Icon(Icons.Default.Add, contentDescription = "Add")
-                }
-            }
+//            floatingActionButton = {
+//                FloatingActionButton(
+//                    onClick = { viewModel.addPathSample() },
+//                    modifier = Modifier
+//                        .padding(bottom = 16.dp),
+//                    shape = CircleShape,
+//                    containerColor = MaterialTheme.colorScheme.primary,
+//                    contentColor = MaterialTheme.colorScheme.onPrimary,
+//                    elevation = FloatingActionButtonDefaults.elevation(
+//                        defaultElevation = 4.dp,
+//                        pressedElevation = 8.dp
+//                    )
+//                ) {
+//                    Icon(Icons.Default.Add, contentDescription = "Add")
+//                }
+//            }
 
         ) { innerPadding -> HistoryContent(innerPadding, viewModel) }
     }, navController = navController, loginViewModel = loginViewModel)

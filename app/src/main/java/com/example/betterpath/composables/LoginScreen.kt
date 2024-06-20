@@ -1,5 +1,11 @@
 package com.example.betterpath.composables
 
+import android.app.Activity.RESULT_OK
+import android.content.IntentSender
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,6 +19,9 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -20,14 +29,23 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.betterpath.R
+import com.example.betterpath.firebase_signIn.GoogleAuthUiClient
+import com.example.betterpath.firebase_signIn.GoogleLoginButton
 import com.example.betterpath.repository.PreferenceRepository
 import com.example.betterpath.viewModel.LoginViewModel
+import com.google.android.gms.auth.api.identity.Identity
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(navController: NavController, loginViewModel: LoginViewModel) {
     val context = LocalContext.current
+
+
     Column(
         Modifier.background(MaterialTheme.colorScheme.background)
     ) {
@@ -39,25 +57,10 @@ fun LoginScreen(navController: NavController, loginViewModel: LoginViewModel) {
                 .fillMaxSize()
                 .padding(horizontal = 64.dp)
         ) {
-
-            Button(
-                onClick = {
-                    // TODO implementare API Google
-                    loginViewModel.login()
-                    navController.navigate("mainRoute") {
-                        popUpTo("loginRoute") {
-                            inclusive = true
-                        }
-                    }
-                },
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary)
-            ) {
-                Text(
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    text = context.getString(R.string.login_with_google)
-                )
-            }
+            GoogleLoginButton(
+                loginViewModel = loginViewModel,
+                navController = navController,
+                modifier = Modifier.fillMaxWidth())
 
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -102,13 +105,14 @@ fun LoginScreen(navController: NavController, loginViewModel: LoginViewModel) {
         }
     }
 
-}
 
-@Preview(showBackground = true)
-@Composable
-fun LoginScreenPreview() {
-    LoginScreen(
-        navController = NavController(LocalContext.current),
-        loginViewModel = LoginViewModel(PreferenceRepository(LocalContext.current))
-    )
 }
+//
+//@Preview(showBackground = true)
+//@Composable
+//fun LoginScreenPreview() {
+//    LoginScreen(
+//        navController = NavController(LocalContext.current),
+//        loginViewModel = LoginViewModel(PreferenceRepository(LocalContext.current))
+//    )
+//}

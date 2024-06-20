@@ -51,7 +51,8 @@ fun GMaps(centerLat: Double? = null, centerLng: Double? = null,
             }
         }
     }
-    val test = false //todo togliere
+    //todo togliere la flag
+    val test = false
     if (test) {
         GoogleMap(
             modifier = Modifier.fillMaxSize(),

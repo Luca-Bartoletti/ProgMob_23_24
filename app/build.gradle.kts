@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     id("kotlin-kapt")
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+    alias(libs.plugins.google.gms.google.services)
 }
 
 android {
@@ -76,6 +77,7 @@ dependencies {
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.play.services.location)
     implementation(libs.androidx.runtime.livedata)
+    implementation(libs.firebase.auth)
 
     testImplementation(libs.junit)
     testImplementation(libs.ui.test.junit4)
@@ -96,6 +98,13 @@ dependencies {
     //maps
     implementation (libs.play.services.maps.v1820)
     implementation (libs.maps.compose)
+
+    //Google signin
+    implementation(libs.firebase.auth.ktx)
+    implementation(libs.play.services.auth)
+    implementation(libs.coil.compose)
+
+
 
     //test
     testImplementation(libs.kotlinx.coroutines.test)

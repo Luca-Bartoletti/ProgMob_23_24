@@ -69,6 +69,7 @@ fun Header(context: Context = LocalContext.current,
                             .padding(end = 8.dp)
                             .scale(2f)
                             .clickable {
+                                println("CLICK")
                                 loginViewModel.openMenu()
                             }
                     )
@@ -114,11 +115,11 @@ fun CircleImage(resource: Int, contentDescription: String?, onClickAction: () ->
     )
 }
 
-@Preview(showBackground = true)
-@Composable
-fun HeaderPreview() {
-    val context = LocalContext.current
-    Header(navController = NavController(context), loginViewModel = LoginViewModel(
-        PreferenceRepository(context)
-    ))
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun HeaderPreview() {
+//    val context = LocalContext.current
+//    Header(navController = NavController(context), loginViewModel = LoginViewModel(
+//        PreferenceRepository(context)
+//    ))
+//}

@@ -112,8 +112,8 @@ fun CompareContent(innerPadding : PaddingValues, historyViewModel: HistoryViewMo
                 CircularProgressIndicator(color = Color.Black)
             else
                 GMaps(
-                    centerLat = pathData1.value[0]?.lat,
-                    centerLng = pathData1.value[0]?.lng,
+                    centerLat = if(pathData1.value.isNotEmpty()) pathData1.value[0]?.lat else null,
+                    centerLng = if(pathData1.value.isNotEmpty()) pathData1.value[0]?.lng else null,
                     points = pathData1.value,
                     points2 = pathData2.value,
                     numberOfPath = 2

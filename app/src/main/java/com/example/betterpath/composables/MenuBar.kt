@@ -10,8 +10,10 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Close
@@ -23,28 +25,40 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.focus.focusModifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.example.betterpath.R
+import com.example.betterpath.firebase_signIn.GoogleAuthUiClient
+import com.example.betterpath.firebase_signIn.GoogleLoginButton
+import com.example.betterpath.firebase_signIn.UserData
 import com.example.betterpath.repository.PreferenceRepository
 import com.example.betterpath.viewModel.LoginViewModel
+import com.google.android.gms.auth.api.identity.Identity
 
 @Composable
 fun MenuBar(loginViewModel: LoginViewModel, navController: NavController) {
 
     val isUserLogged by loginViewModel.isLogged.collectAsState(initial = false)
+    val userData = loginViewModel.googleAuthUiClient.getSignedInUser()
 
     Column(
         modifier = Modifier
             .fillMaxHeight()
             .background(MaterialTheme.colorScheme.tertiary)
             .width(LocalConfiguration.current.screenWidthDp.dp / 100 * 55)
+            .padding(start = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(
             modifier = Modifier
@@ -53,6 +67,7 @@ fun MenuBar(loginViewModel: LoginViewModel, navController: NavController) {
                 .padding(top = 32.dp),
             horizontalArrangement = Arrangement.End
         ) {
+            //Icona per la chiusura del menu
             Icon(
                 imageVector = Icons.Filled.Close,
                 contentDescription = "Close Menu",
@@ -65,74 +80,55 @@ fun MenuBar(loginViewModel: LoginViewModel, navController: NavController) {
                     }
             )
         }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            if (isUserLogged) {
-                Icon(
-                    imageVector = Icons.Filled.AccountCircle,
-                    contentDescription = "Account image",
-                    tint = MaterialTheme.colorScheme.onTertiary,
-                    modifier = Modifier
-                        .padding(start = 8.dp)
-                        .scale(1.5f)
-                )
-                Column(
-                    modifier = Modifier.padding(start = 8.dp)
-                ) {
-                    Text(
-                        text = "prova",
-                        color = MaterialTheme.colorScheme.onTertiary,
-                    )
-                    Text(
-                        text = "nome_utente",
-                        color = MaterialTheme.colorScheme.onTertiary,
-                    )
 
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Button(
-                        onClick = {
-                            loginViewModel.logout()
-                            navController.navigate("loginRoute"){
-                                popUpTo("loginRoute"){
-                                    inclusive = true
-                                }
-                            }
-                            loginViewModel.closeMenu()
-                        },
-                        colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary)
-                    ){
-                        Text(
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            text = stringResource(R.string.logout)
-                        )
-                    }
-                }
-            } else {
-                Button(
-                    modifier = Modifier.padding(start = 8.dp),
-                    onClick = {
-                        // TODO implementare API Google
-                        loginViewModel.login()
-                        loginViewModel.closeMenu()
-                    },
-                    colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary)
-                ) {
-                    Text(
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        text = LocalContext.current.getString(R.string.login_with_google)
-                    )
-                }
+
+        if (isUserLogged) {
+            if (userData?.pictureUrl != null) {
+
+                AsyncImage(
+                    model = userData.pictureUrl,
+                    contentDescription = "profile picture",
+                    modifier = Modifier
+                        .scale(2f)
+                        .clip(CircleShape),
+                    contentScale = ContentScale.Crop
+                )
+
+                Spacer(modifier = Modifier.height(32.dp))
             }
+
+            if (userData?.username != null) {
+                Text(
+                    text = userData.username,
+                    color = MaterialTheme.colorScheme.onTertiary,
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
+
+            GoogleLoginButton(
+                loginViewModel = loginViewModel,
+                navController = navController,
+                modifier = Modifier,
+                isMenu = true,
+                isLogIn = false,
+            )
+        } else {
+            GoogleLoginButton(
+                loginViewModel = loginViewModel,
+                navController = navController,
+                modifier = Modifier.padding(start = 8.dp),
+                isMenu = true
+            )
         }
+
 
         Button(
             onClick = {
                 navController.navigate("debugRoute")
                 loginViewModel.closeMenu()
             },
-            modifier = Modifier.padding(start = 8.dp),
+            //modifier = Modifier.padding(start = 8.dp),
         ) {
             Text(text = "DEBUG")
         }
@@ -141,10 +137,13 @@ fun MenuBar(loginViewModel: LoginViewModel, navController: NavController) {
 
 }
 
-@Preview(showBackground = true)
-@Composable
-fun MenuBarPreview() {
-    MenuBar(
-        LoginViewModel(PreferenceRepository(LocalContext.current)),
-        navController = NavController(LocalContext.current) )
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun MenuBarPreview() {
+//    MenuBar(
+//        LoginViewModel(PreferenceRepository(LocalContext.current),
+//            googleAuthUiClient = GoogleAuthUiClient(context = LocalContext.current.applicationContext,
+//            oneTapClient = Identity.getSignInClient(LocalContext.current.applicationContext))),
+//        navController = NavController(LocalContext.current)
+//    )
+//}
