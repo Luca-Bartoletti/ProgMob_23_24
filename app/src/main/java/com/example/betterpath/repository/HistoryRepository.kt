@@ -17,8 +17,11 @@ class HistoryRepository(private val historyViewModel: HistoryViewModel, private 
     val selectedPathInfo2 : MutableStateFlow<PathHistory?> = MutableStateFlow(null)
     val todayID : MutableStateFlow<Int> = MutableStateFlow(-1)
 
+    val fetchedID : MutableStateFlow<Boolean> = MutableStateFlow(false)
+
 
     fun init(){
+        println("fetchedID : ${fetchedID.value}")
         val today = LocalDate.now().toString()
         historyViewModel.viewModelScope.launch {
             withContext(Dispatchers.IO) {
@@ -36,8 +39,8 @@ class HistoryRepository(private val historyViewModel: HistoryViewModel, private 
                     todayID.value = dao.getPathIdFromDate(today)
                 }
             }
-
-
+            fetchedID.value = true
+            println("fetchedID : ${fetchedID.value}")
         }
     }
 

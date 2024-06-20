@@ -25,6 +25,7 @@ class HistoryViewModel(database: MyAppDatabase) : ViewModel() {
     var selectedPathInfo1 = repository.selectedPathInfo1
     var selectedPathInfo2 = repository.selectedPathInfo2
     var todayId = repository.todayID
+    val isFetchedID = repository.fetchedID
 
     var checkedBox = mutableStateOf(arrayOf(-1,-1))
     private set
@@ -60,17 +61,14 @@ class HistoryViewModel(database: MyAppDatabase) : ViewModel() {
 
     fun updateCheckedBox(index: Int, value: Boolean) : Boolean {
         var result = false
-        println(value)
         if(value && numberOfChecked.intValue < 2) {
             result = true
             checkedBox.value[numberOfChecked.intValue] = index
             numberOfChecked.intValue++
-            println(""+checkedBox.value[0] +" "+ checkedBox.value[1])
         }
         if (!value && numberOfChecked.intValue == 1){
             checkedBox.value[0] = -1
             numberOfChecked.intValue--
-            println(""+checkedBox.value[0] +" "+ checkedBox.value[1])
         }
         if (!value && numberOfChecked.intValue == 2){
             if(checkedBox.value[1] == index) {
@@ -80,7 +78,6 @@ class HistoryViewModel(database: MyAppDatabase) : ViewModel() {
                 checkedBox.value[1] = -1
             }
             numberOfChecked.intValue--
-            println(""+checkedBox.value[0] +" "+ checkedBox.value[1])
         }
 
         if(numberOfChecked.intValue == 2)

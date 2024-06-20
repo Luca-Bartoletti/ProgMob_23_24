@@ -1,9 +1,9 @@
 package com.example.betterpath.viewModel
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Build
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
@@ -32,9 +32,7 @@ class LocationViewModel(
     private val _locationData = MutableStateFlow<List<PathData?>>(emptyList())
     val locationData = _locationData.asStateFlow()
 
-    //variabile per segnare la prima posizione dell'utente nota
-//    private val _firstLocation = MutableStateFlow<Location?>(null)
-//    val firstLocation = _firstLocation
+    private var _lastLocationData = MutableStateFlow<LatLng?>(null)
 
     // Variabili per memorizzare se siano presenti i permessi espliciti per l'uso della posizione
     //da parte dell'utente
@@ -50,7 +48,7 @@ class LocationViewModel(
 
     // Identificativo del percorso odierno, necessario per le operazioni sui dati raccolti
     // quali la rappresentazione a schermo ed il loro salvataggio
-    private var todayPathId: Int = historyViewModel.todayId.value
+    private var todayPathId: MutableStateFlow<Int> = historyViewModel.todayId
 
     // riferimenti a repository e Dao per le operazioni sui dati
     private var pathDataDao = database.pathDataDao()
@@ -62,9 +60,13 @@ class LocationViewModel(
     // Continene un lista di PathData?
     var fetchedLocationData = locationRepository.fetchedData
         private set
+
     // supporta il precedente in caso sia necessario confrontare più percorsi in parallelo
     var fetchedLocationData2 = locationRepository.fetchedData2
         private set
+
+    val locationDataReady = locationRepository.locationDataReady
+    val location2DataReady = locationRepository.location2DataReady
 
     // variabile che rappresenta la differenza tra due percorsi
     var pathDifference = MutableStateFlow<Float>(0f)
@@ -92,15 +94,45 @@ class LocationViewModel(
         // letti i valori relativi alle posizioni ottenute dell'utente
         viewModelScope.launch {
             locationRepository.locationFlow.collect { newLocation ->
-                _locationData.value += PathData(
-                    lat = newLocation.latitude,
-                    lng = newLocation.longitude,
-                    time = newLocation.time,
-                    pathHistoryId = todayPathId
-                )
+                if (_lastLocationData.value == null) {
+                    _lastLocationData.value =
+                        LatLng(newLocation.latitude, newLocation.longitude)
+                    _locationData.value += PathData(
+                        lat = newLocation.latitude,
+                        lng = newLocation.longitude,
+                        time = newLocation.time,
+                        pathHistoryId = todayPathId.value,
+                        // 1 -> start
+                        // 2 -> onGoning
+                        // 3 -> stop
+                        startStop = 1
+                    )
+                } else {
+                    val results = FloatArray(1)
+                    // Calcolo la distanza tra il punto precedente e quello attuale.
+                    // Non salvo solo se non mi sono mosso abbastanza.
+                    // In questo modo non salvo posizioni superflue
+                    Location.distanceBetween(
+                        _lastLocationData.value!!.latitude, _lastLocationData.value!!.longitude,
+                        newLocation.latitude, newLocation.longitude,
+                        results
+                    )
+                    if (results[0] >= 7) {
+                        _locationData.value += PathData(
+                            lat = newLocation.latitude,
+                            lng = newLocation.longitude,
+                            time = newLocation.time,
+                            pathHistoryId = todayPathId.value,
+                            // 1 -> start
+                            // 2 -> onGoning
+                            // 3 -> stop
+                            startStop = 2
+                        )
+                        _lastLocationData.value = LatLng(newLocation.latitude, newLocation.longitude)
+                    }
+                }
             }
         }
-
     }
 
     private fun getForeGroundPermissionStatus(): Boolean {
@@ -160,16 +192,14 @@ class LocationViewModel(
     }
 
     fun startLocationUpdates() {
-
         locationRepository.startLocationUpdates()
-
         isTracking.value = true
         println("start tracking")
     }
 
     fun stopLocationUpdates() {
         saveDataAndClear()
-        locationRepository.getPathDataFromPathHistoryId(todayPathId)
+        locationRepository.getPathDataFromPathHistoryId(todayPathId.value)
         locationRepository.stopLocationUpdates()
         isTracking.value = false
         println("stop Tracking")
@@ -185,11 +215,12 @@ class LocationViewModel(
 
     fun getTodayPathData(){
         viewModelScope.launch {
-            locationRepository.getPathDataFromPathHistoryId(todayPathId)
+            locationRepository.getPathDataFromPathHistoryId(todayPathId.value)
         }
     }
 
     fun getLocationData1And2(){
+        println("called getLocationData1And2()")
         locationRepository.getLocation1And2(historyViewModel.checkedBox.value[0], historyViewModel.checkedBox.value[1])
     }
 
@@ -242,7 +273,8 @@ class LocationViewModel(
     private fun countDifferentPoints(set1: Set<LatLng>, set2: Set<LatLng>): Float {
         val allPoints = set1.union(set2)
         val commonPoints = set1.intersect(set2)
-        return (allPoints.size.toFloat() - commonPoints.size.toFloat())/allPoints.size.toFloat()
+        println("value of difference : ${allPoints.size.toFloat()} - ${commonPoints.size.toFloat()} / ${allPoints.size.toFloat()} = ${(allPoints.size.toFloat() - commonPoints.size.toFloat())/allPoints.size.toFloat()}")
+        return if (allPoints.isEmpty()) 1f else (allPoints.size.toFloat() - commonPoints.size.toFloat())/allPoints.size.toFloat()
     }
 
 }

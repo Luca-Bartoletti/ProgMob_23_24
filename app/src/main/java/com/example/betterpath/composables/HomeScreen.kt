@@ -57,7 +57,8 @@ fun HomeScreen(
                 Footer(
                     navController = navController,
                     historyButton = true,
-                    historyViewModel = historyViewModel
+                    historyViewModel = historyViewModel,
+                    locationViewModel = locationViewModel
                 )
             },
             floatingActionButton = {
@@ -134,7 +135,6 @@ fun HomeContent(innerPadding: PaddingValues, locationViewModel: LocationViewMode
             contentAlignment = Alignment.Center
         ) {
             if( (todayFetchedLocation.value.isNotEmpty() || todayNewLocation.value.isNotEmpty()) && isCenterReady){
-              println("CHIAMO MAPS")
                 GMaps(
                     centerLng = (locationViewModel.maxLng + locationViewModel.maxLng) / 2,
                     centerLat = (locationViewModel.maxLat + locationViewModel.maxLat) / 2,
@@ -146,7 +146,6 @@ fun HomeContent(innerPadding: PaddingValues, locationViewModel: LocationViewMode
                 // 1) (todayFetchedLocation.value.isNotEmpty() || todayNewLocation.value.isNotEmpty() é falsa --> non ho dati da mostrare
                 // 2) Ho dati da mostrare ma non ho ancora calcolato il centro della mappa
                 if(todayFetchedLocation.value.isEmpty() && todayNewLocation.value.isEmpty()){
-                    println("NON CHIAMO MAPS PER LISTE VUOTE")
                     Text(
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center,
@@ -155,7 +154,6 @@ fun HomeContent(innerPadding: PaddingValues, locationViewModel: LocationViewMode
                 }
                 else {
                     locationViewModel.getMaxMinLatLon(todayNewLocation.value + todayFetchedLocation.value)
-                    println("NON CHIAMO MAPS PER CENTRO NON CALCOLATO")
                     CircularProgressIndicator(modifier = Modifier, Color.Black)
                 }
             }

@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -28,12 +29,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.betterpath.R
 import com.example.betterpath.viewModel.HistoryViewModel
 import com.example.betterpath.viewModel.LocationViewModel
 import com.example.betterpath.viewModel.LoginViewModel
+import java.util.Locale
+
+
 
 @Composable
 fun CompareScreen(
@@ -41,6 +46,19 @@ fun CompareScreen(
     loginViewModel: LoginViewModel,
     historyViewModel: HistoryViewModel,
     locationViewModel: LocationViewModel){
+
+    val data2Ready = locationViewModel.location2DataReady.collectAsState()
+    val data1Ready = locationViewModel.locationDataReady.collectAsState()
+    val dataReady = data1Ready.value && data2Ready.value
+    var calledFunction = false
+
+    LaunchedEffect(dataReady, calledFunction) {
+        if(dataReady && !calledFunction) {
+            calledFunction = true
+            locationViewModel.comparePaths()
+        }
+    }
+
     ScreenWithMenu(content = {
         Scaffold(
             topBar = { Header(navController = navController, loginViewModel = loginViewModel) },
@@ -53,19 +71,12 @@ fun CompareScreen(
 fun CompareContent(innerPadding : PaddingValues, historyViewModel: HistoryViewModel, locationViewModel: LocationViewModel){
     val path1 = historyViewModel.selectedPathInfo1.collectAsState(null)
     val path2 = historyViewModel.selectedPathInfo2.collectAsState(null)
-
     val differenceValue = locationViewModel.pathDifference.collectAsState(0f)
     val pathData1 = locationViewModel.fetchedLocationData.collectAsState(emptyList())
     val pathData2 = locationViewModel.fetchedLocationData2.collectAsState(emptyList())
-
-    locationViewModel.getLocationData1And2()
-
-    historyViewModel.fetchFirstPath()
-    historyViewModel.fetchSecondPath()
-
-    if (pathData1.value.isEmpty() && pathData2.value.isEmpty())
-        locationViewModel.comparePaths()
-
+    val data2Ready = locationViewModel.location2DataReady.collectAsState()
+    val data1Ready = locationViewModel.locationDataReady.collectAsState()
+    val dataReady = data1Ready.value && data2Ready.value
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -73,27 +84,36 @@ fun CompareContent(innerPadding : PaddingValues, historyViewModel: HistoryViewMo
             .padding(horizontal = 32.dp),
         verticalArrangement = Arrangement.Center
     ){
-        if (differenceValue.value != 0f) {
-            println("Difference value = ${differenceValue.value}")
-            AnimatedLine(differenceValue.value)
-            AnimatedText(differenceValue.value)
-        } else{
-            AnimatedLine(0f)
-            AnimatedText(0f)
-        }
 
-
+        //AnimatedLine(differenceValue.value, duration = 3000)
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp),
+            text = stringResource(R.string.path_difference)+"${
+                String.format(
+                    Locale.ITALY,
+                    "%.2f",
+                    differenceValue.value * 100
+                )
+            } %",
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.headlineSmall
+        )
 
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .weight(0.5f)
-                .padding(vertical = 16.dp)
+                .padding(vertical = 16.dp),
+            contentAlignment =  Alignment.Center
         ) {
-            if (pathData1.value.isEmpty() && pathData2.value.isEmpty())
+            if (!dataReady)
                 CircularProgressIndicator(color = Color.Black)
             else
                 GMaps(
+                    centerLat = pathData1.value[0]?.lat,
+                    centerLng = pathData1.value[0]?.lng,
                     points = pathData1.value,
                     points2 = pathData2.value,
                     numberOfPath = 2

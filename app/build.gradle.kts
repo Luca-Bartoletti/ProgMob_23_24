@@ -72,13 +72,15 @@ dependencies {
     implementation(libs.play.services.maps)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
-    // todo check
+
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.play.services.location)
     implementation(libs.androidx.runtime.livedata)
 
     testImplementation(libs.junit)
     testImplementation(libs.ui.test.junit4)
+    testImplementation(libs.junit.junit)
+    testImplementation(libs.junit.jupiter)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
@@ -94,6 +96,11 @@ dependencies {
     //maps
     implementation (libs.play.services.maps.v1820)
     implementation (libs.maps.compose)
+
+    //test
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.mockito.core)
+    testImplementation (libs.mockito.kotlin)
 }
 
 secrets {

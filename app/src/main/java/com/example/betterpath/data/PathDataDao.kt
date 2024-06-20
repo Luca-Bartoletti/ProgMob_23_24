@@ -15,7 +15,7 @@ interface PathDataDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(list: List<PathData>)
 
-    @Query("SELECT * FROM PathData WHERE pathHistoryId = :pathId")
+    @Query("SELECT * FROM PathData WHERE pathHistoryId = :pathId ORDER BY time")
     fun getAllPathWithHistoryId(pathId :Int) : List<PathData?>
 
 }

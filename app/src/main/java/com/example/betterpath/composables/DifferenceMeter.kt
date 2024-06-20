@@ -14,9 +14,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun AnimatedLine(targetValue: Float) {
+fun AnimatedLine(targetValue: Float, duration : Int = 0) {
     val animationProgress = remember { Animatable(0f) }
-    val durationMillis = 3000  // Durata dell'animazione in millisecondi
+    val durationMillis = duration  // Durata dell'animazione in millisecondi
+
+    println("animated to $targetValue")
 
     LaunchedEffect(Unit) {
         animationProgress.animateTo(

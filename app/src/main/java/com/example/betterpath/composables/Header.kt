@@ -97,15 +97,20 @@ fun Header(context: Context = LocalContext.current,
     }
 }
 @Composable
-fun CircleImage(resource: Int, contentDescription: String?, onClickAction: () -> Unit){
+fun CircleImage(resource: Int, contentDescription: String?, onClickAction: () -> Unit, enableOnClick :Boolean = true){
     Image(
         painter = painterResource(id = resource),
         contentDescription = contentDescription,
         contentScale = ContentScale.Fit,
-        modifier = Modifier
+        modifier = if (enableOnClick)
+            Modifier
             .padding(top = 8.dp, end = 8.dp, bottom = 8.dp)
             .clip(CircleShape)
             .clickable(onClick = onClickAction)
+        else
+            Modifier
+                .padding(top = 8.dp, end = 8.dp, bottom = 8.dp)
+                .clip(CircleShape)
     )
 }
 

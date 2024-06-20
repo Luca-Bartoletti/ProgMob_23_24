@@ -22,9 +22,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.betterpath.R
 import com.example.betterpath.viewModel.HistoryViewModel
+import com.example.betterpath.viewModel.LocationViewModel
 
 @Composable
-fun Footer(navController: NavController? = null, context: Context = LocalContext.current, historyViewModel: HistoryViewModel,
+fun Footer(navController: NavController? = null, context: Context = LocalContext.current, historyViewModel: HistoryViewModel, locationViewModel: LocationViewModel,
            homeButton : Boolean = false, historyButton : Boolean = false, compareButton: Boolean = false){
     val brush = Brush.verticalGradient(
         colorStops = arrayOf(
@@ -80,6 +81,9 @@ fun Footer(navController: NavController? = null, context: Context = LocalContext
             } else if(compareButton){
                 Button(
                     onClick = {
+                        locationViewModel.getLocationData1And2()
+                        historyViewModel.fetchFirstPath()
+                        historyViewModel.fetchSecondPath()
                         navController?.navigate("compareScreen")
                     },
                     enabled = isCompareButtonEnabled,

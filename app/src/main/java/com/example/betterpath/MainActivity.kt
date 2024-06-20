@@ -66,8 +66,6 @@ class MainActivity : ComponentActivity() {
                 DisposableEffect(lifecycleOwner) {
                     val observer = LifecycleEventObserver { _, event ->
                         //per debug
-                        println("EVENTO :: $event -- #eventi :: ${locationViewModel.locationData.value.size}")
-
                         if (event == Lifecycle.Event.ON_RESUME) {
                             if (locationViewModel.isTracking.value) locationViewModel.startLocationUpdates()
                         } else if (event == Lifecycle.Event.ON_DESTROY){

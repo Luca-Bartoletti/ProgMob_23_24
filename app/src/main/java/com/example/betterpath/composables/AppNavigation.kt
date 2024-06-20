@@ -10,13 +10,13 @@ import com.example.betterpath.viewModel.LocationViewModel
 import com.example.betterpath.viewModel.LoginViewModel
 
 @Composable
-fun AppNavigation(historyModelView: HistoryViewModel, loginViewModel: LoginViewModel, locationViewModel: LocationViewModel){
+fun AppNavigation(historyViewModel: HistoryViewModel, loginViewModel: LoginViewModel, locationViewModel: LocationViewModel){
     val navController  = rememberNavController()
 
 
     NavHost(navController = navController, startDestination = "loadingScreen"){
         navigation(startDestination = "logoScreen", route= "loadingScreen"){
-            composable("logoScreen") { LogoScreen(navController = navController,loginViewModel)}
+            composable("logoScreen") { LogoScreen(navController = navController, loginViewModel, historyViewModel)}
         }
         navigation(startDestination = "permissionsScreen", route = "onboardingRoute"){
             composable("permissionsScreen") { PermissionsScreen(navController = navController, locationViewModel = locationViewModel, loginViewModel=loginViewModel) }
@@ -25,9 +25,9 @@ fun AppNavigation(historyModelView: HistoryViewModel, loginViewModel: LoginViewM
             composable("loginScreen") {LoginScreen(navController, loginViewModel)}
         }
         navigation(startDestination = "mainScreen", route = "mainRoute") {
-            composable("mainScreen") {HomeScreen(navController, historyModelView, loginViewModel = loginViewModel, locationViewModel = locationViewModel)}
-            composable("historyScreen") {HistoryScreen(navController, historyModelView, loginViewModel)}
-            composable("compareScreen") {CompareScreen(navController, loginViewModel = loginViewModel, historyViewModel = historyModelView, locationViewModel = locationViewModel)}
+            composable("mainScreen") {HomeScreen(navController, historyViewModel, loginViewModel = loginViewModel, locationViewModel = locationViewModel)}
+            composable("historyScreen") {HistoryScreen(navController, historyViewModel, loginViewModel, locationViewModel)}
+            composable("compareScreen") {CompareScreen(navController, loginViewModel = loginViewModel, historyViewModel = historyViewModel, locationViewModel = locationViewModel)}
         }
         navigation(startDestination = "debugScreen", route="debugRoute"){
             composable("debugScreen") { LocationReaderDebug(locationViewModel = locationViewModel)}

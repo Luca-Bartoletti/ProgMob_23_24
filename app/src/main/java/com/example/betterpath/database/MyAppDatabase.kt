@@ -13,8 +13,8 @@ import com.example.betterpath.data.PathHistoryDao
         PathHistory::class,
         PathData::class
     ],
-    version = 1,
-    // todo rimuovere
+    version = 2,
+    // todo rimuovere?
     exportSchema = false
 )
 

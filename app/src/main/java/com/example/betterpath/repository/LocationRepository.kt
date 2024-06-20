@@ -43,9 +43,11 @@ class LocationRepository(
 
     private val _fetchedData  = MutableStateFlow<List<PathData?>>(emptyList())
     val fetchedData:StateFlow<List<PathData?>> = _fetchedData.asStateFlow()
+    val locationDataReady = MutableStateFlow(false)
 
     private val _fetchedData2  = MutableStateFlow<List<PathData?>>(emptyList())
     val fetchedData2:StateFlow<List<PathData?>> = _fetchedData2.asStateFlow()
+    val location2DataReady = MutableStateFlow(false)
 
     fun startLocationUpdates(){
         if (ActivityCompat.checkSelfPermission(
@@ -73,6 +75,7 @@ class LocationRepository(
         locationViewModel.viewModelScope.launch {
             val insertList = mutableListOf<PathData>()
             for (value in values) value?.let { insertList += value }
+            insertList[insertList.size-1].startStop = 3
             withContext(Dispatchers.IO) {
                 dao.insertAll(insertList)
             }
@@ -89,17 +92,21 @@ class LocationRepository(
     }
 
     fun getLocation1And2(id1 :Int, id2:Int){
+        locationDataReady.value = false
+        location2DataReady.value = false
         _fetchedData.value = emptyList()
         _fetchedData2.value = emptyList()
         locationViewModel.viewModelScope.launch {
             withContext(Dispatchers.IO){
                 _fetchedData.value = dao.getAllPathWithHistoryId(id1)
             }
+            locationDataReady.value = true
         }
         locationViewModel.viewModelScope.launch {
             withContext(Dispatchers.IO){
                 _fetchedData2.value = dao.getAllPathWithHistoryId(id2)
             }
+            location2DataReady.value = true
         }
     }
 

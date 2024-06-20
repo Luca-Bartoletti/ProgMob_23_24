@@ -21,4 +21,5 @@
     <string name="permissions_explanation">L\'applicazione necessita dei tuoi permessi per accedere ai dati sulla tua posizione. Puoi usare il form sottostante dare la tua autorizzazione.</string>
     <string name="localization_is_active">Localizzazione attiva</string>
     <string name="no_data_today">Non ci sono dati sui tuoi spostamenti di oggi. Perché non andare a fare due passi? Non dimenticarti di premere il bottone prima di partire!</string>
+    <string name="path_difference">Percorsi diversi per il</string>
 </resources>

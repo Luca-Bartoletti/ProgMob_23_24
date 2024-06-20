@@ -32,10 +32,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.betterpath.R
 import com.example.betterpath.viewModel.HistoryViewModel
+import com.example.betterpath.viewModel.LocationViewModel
 import com.example.betterpath.viewModel.LoginViewModel
 
 @Composable
-fun HistoryScreen(navController: NavController, viewModel: HistoryViewModel, loginViewModel: LoginViewModel) {
+fun HistoryScreen(navController: NavController, viewModel: HistoryViewModel, loginViewModel: LoginViewModel, locationViewModel: LocationViewModel) {
 
     if (navController.currentBackStackEntry?.destination?.route == "historyScreen")
         viewModel.resetCheckBoxValue()
@@ -48,7 +49,8 @@ fun HistoryScreen(navController: NavController, viewModel: HistoryViewModel, log
                     navController = navController,
                     homeButton = true,
                     compareButton = true,
-                    historyViewModel = viewModel
+                    historyViewModel = viewModel,
+                    locationViewModel = locationViewModel
                 )
             },
             //todo rimuovere FAB post test
@@ -119,7 +121,7 @@ fun InfoRow(id:Int, viewModel: HistoryViewModel?, distance: Int, data: String){
             horizontalAlignment = Alignment.Start
         ) {
             Text(text = stringResource(R.string.path_info_date) + " : $data")
-            Text(text = stringResource(R.string.path_info_distance) + " : $distance km")
+            Text(text = stringResource(R.string.path_info_distance) + " : $distance m")
         }
 
         Column(
