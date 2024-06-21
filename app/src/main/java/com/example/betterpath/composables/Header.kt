@@ -84,13 +84,13 @@ fun Header(context: Context = LocalContext.current,
                     resource = R.drawable.logo_ia,
                     contentDescription = context.getString(R.string.application_logo),
                     onClickAction = {
-                        if(backstackEntry?.route != "permissionsScreen") {
-                            navController.navigate("homeScreen") {
-                                popUpTo("home") {
-                                    inclusive = false
-                                }
-                            }
-                        }
+//                        if(backstackEntry?.route != "permissionsScreen") {
+//                            navController.navigate("homeScreen") {
+//                                popUpTo("home") {
+//                                    inclusive = false
+//                                }
+//                            }
+//                        }
                     }
                 )
             }

@@ -14,7 +14,6 @@ import com.example.betterpath.data.PathHistoryDao
         PathData::class
     ],
     version = 2,
-    // todo rimuovere?
     exportSchema = false
 )
 

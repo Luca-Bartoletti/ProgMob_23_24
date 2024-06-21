@@ -52,7 +52,7 @@ fun CompareScreen(
     val dataReady = data1Ready.value && data2Ready.value
     var calledFunction = false
 
-    LaunchedEffect(dataReady, calledFunction) {
+    LaunchedEffect(dataReady) {
         if(dataReady && !calledFunction) {
             calledFunction = true
             locationViewModel.comparePaths()

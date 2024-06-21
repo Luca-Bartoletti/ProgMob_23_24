@@ -52,7 +52,7 @@ fun GMaps(centerLat: Double? = null, centerLng: Double? = null,
         }
     }
     //todo togliere la flag
-    val test = false
+    val test = true
     if (test) {
         GoogleMap(
             modifier = Modifier.fillMaxSize(),

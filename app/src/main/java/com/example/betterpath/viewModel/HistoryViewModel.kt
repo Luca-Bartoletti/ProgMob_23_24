@@ -20,56 +20,83 @@ class HistoryViewModel(database: MyAppDatabase) : ViewModel() {
     //modifiche per Room
     private var pathHistoryDao = database.pathHistoryDao()
     private val repository : HistoryRepository = HistoryRepository(this, pathHistoryDao!!)
+
+    //tengo in memoria i percorsi salvati fino ad ora
     var pathHistory = repository.allPaths
         private set
+
+    //varibili per il fetch delle informazioni richieste nella pagina di confronto
     var selectedPathInfo1 = repository.selectedPathInfo1
     var selectedPathInfo2 = repository.selectedPathInfo2
+
+    // identificativo della giornata odierna del db Room
     var todayId = repository.todayID
+    // booleno per controllare se todayPathId sia valido o meno
     val isFetchedID = repository.fetchedID
 
+    // tengo traccia delle date di interesse e edel numero di date selezionate
     var checkedBox = mutableStateOf(arrayOf(-1,-1))
-    private set
+        private set
     private var numberOfChecked = mutableIntStateOf(0)
+
+    //variabile per abilitare o meno la prosecuzione alla pagina di comparazione
     var enableCompareButton = mutableStateOf(false)
         private set
-
-    fun fetchPathById(id: Int){
-        repository.getSelectedPath(id)
-    }
 
     init {
         repository.init()
     }
 
-    //logica CheckBox
+    /**
+     * Riporta i valori di conrollo della checkBox allo stato di partenza in cui nessun valore é
+     * selezionato
+     * */
     fun resetCheckBoxValue(){
         checkedBox.value = arrayOf(-1,-1)
         numberOfChecked.intValue = 0
         enableCompareButton.value = false
     }
 
-    fun updateCheckedBox(index: Int, value: Boolean) : Boolean {
+
+    /**
+     * Gestisce lo stato dell'array di valori delle checkbox e aggiorna le variabili in accordo alle
+     * modifiche richieste (quando esse sono valide)
+     * @param index l'identificativo associato alla checkbox che si vuole aggiornare
+     * @param value valore booleano che indica lo stato della checkBox (true se selezionato,
+     *              false altrimenti)
+     * @return booleano per indicare se la casella può essere spuntata o meno
+     * */
+    fun updateCheckedBox(index: Int, value: Boolean): Boolean {
+        //inizializzo il valore di ritorno
         var result = false
-        if(value && numberOfChecked.intValue < 2) {
+
+        // se ho segnato meno di due valori posso aggiungere l'id passato a quelli selezionati
+        if (value && numberOfChecked.intValue < 2) {
             result = true
             checkedBox.value[numberOfChecked.intValue] = index
             numberOfChecked.intValue++
         }
-        if (!value && numberOfChecked.intValue == 1){
+
+        // se ho un solo valore e voglio toglierlo dalla lista aggiorno senza problemi
+        if (!value && numberOfChecked.intValue == 1) {
             checkedBox.value[0] = -1
             numberOfChecked.intValue--
         }
-        if (!value && numberOfChecked.intValue == 2){
-            if(checkedBox.value[1] == index) {
+        // se ho due valori nella lista cerco quello che voglio togliere e compatto
+        // il valore residuo a sinistra
+        if (!value && numberOfChecked.intValue == 2) {
+            if (checkedBox.value[1] == index) {
                 checkedBox.value[1] = -1
-            } else{
+            } else {
                 checkedBox.value[0] = checkedBox.value[1]
                 checkedBox.value[1] = -1
             }
             numberOfChecked.intValue--
         }
 
-        if(numberOfChecked.intValue == 2)
+        // se ho due valori segnati posso procedere all pagina di confronto, segno a true il flag
+        // altrimenti disabiolito l'operazione segnado il flag a false
+        if (numberOfChecked.intValue == 2)
             enableCompareButton.value = true
         else
             enableCompareButton.value = false
@@ -77,21 +104,51 @@ class HistoryViewModel(database: MyAppDatabase) : ViewModel() {
         return result
     }
 
+    /**
+     * Richiama il repository per ottenre le informazioni sul percoso con id indicato
+     * @param id il valore dell'id del PathHistory di interesse
+     * @param pathNumber indica dove si vuole salvare il PathHistory nle repository (0 nel percorso
+     *      odierno, 1 in selectedPathInfo1, 2 in selectedPathInfo2)
+     * */
+    private fun fetchPathById(id: Int, pathNumber: Int = 0){
+        repository.getSelectedPath(id, pathNumber)
+    }
+
+    /**
+     * Verifica che sia stato selezionato un id valido e richiede al repository, tramite
+     * fetchPathById, di salvarlo in selectedPathInfo1
+     * @see fetchPathById
+     * */
     fun fetchFirstPath() {
         if (checkedBox.value[0] != -1)
-            repository.getSelectedPath(checkedBox.value[0], 1)
+            fetchPathById(checkedBox.value[0], 1)
 
     }
 
+    /**
+     * Verifica che sia stato selezionato un id valido e richiede al repository, tramite
+     * fetchPathById, di salvarlo in selectedPathInfo2
+     * @see fetchPathById
+     * */
     fun fetchSecondPath() {
         if (checkedBox.value[1] != -1)
-            repository.getSelectedPath(checkedBox.value[1], 2)
+            fetchPathById(checkedBox.value[1], 2)
     }
 
+    /**
+     * Ritorna il valore dell'id odierno
+     * @return todayID : Int
+     * */
     fun getTodayId(): Int {
         return repository.todayID.value
     }
 
+    /**
+     * Data una lista di PathData viene calcolato in maniera asincrona la distanza tra tutti i punti
+     * per poi richiedere al repository un aggiornamento del valore odierno con quello calcolato.
+     * @param list List<PathData?>
+     * @see com.example.betterpath.repository.HistoryRepository.updateDistance
+     * */
     fun updateDistance(list : List<PathData?>){
         viewModelScope.launch {
             withContext(Dispatchers.Default){
