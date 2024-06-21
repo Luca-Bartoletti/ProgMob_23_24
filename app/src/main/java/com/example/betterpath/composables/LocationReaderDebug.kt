@@ -29,7 +29,7 @@ fun LocationReaderDebug(locationViewModel: LocationViewModel) {
 fun MyCheck(locationViewModel: LocationViewModel){
     val location = locationViewModel.locationData.collectAsState().value
     val oldLocation = locationViewModel.fetchedLocationData.collectAsState().value
-    locationViewModel.getMaxMinLatLon(oldLocation)
+    locationViewModel.getMaxMinLatLng(oldLocation)
 
     Column(
         modifier = Modifier

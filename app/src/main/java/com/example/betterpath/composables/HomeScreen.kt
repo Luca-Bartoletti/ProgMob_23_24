@@ -1,8 +1,6 @@
 package com.example.betterpath.composables
 
-import android.content.Context
 import android.content.Intent
-import android.location.LocationManager
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,8 +25,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -166,7 +162,7 @@ fun HomeContent(innerPadding: PaddingValues, locationViewModel: LocationViewMode
                     )
                 }
                 else {
-                    locationViewModel.getMaxMinLatLon(todayNewLocation.value + todayFetchedLocation.value)
+                    locationViewModel.getMaxMinLatLng(todayNewLocation.value + todayFetchedLocation.value)
                     CircularProgressIndicator(modifier = Modifier, Color.Black)
                 }
             }

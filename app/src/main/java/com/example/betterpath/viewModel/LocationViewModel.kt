@@ -29,26 +29,47 @@ class LocationViewModel(
 ) : ViewModel() {
 
 
-    // variabile per la raccolta dei dati dal sensore di LOCAZIONE
+    /**
+     * variabile per la raccolta dei dati dal sensore di LOCAZIONE
+     * */
     private val _locationData = MutableStateFlow<List<PathData?>>(emptyList())
+    /**
+     * espone in maniera non modificabile `_locationData`
+     * @see _locationData
+     * */
     val locationData = _locationData.asStateFlow()
 
+    /**
+     * Tiene traccia dell ultimo valore ricevuto in modo da non salvare dati superflui
+     * per il tracciamento degli spostamenti
+     * */
     private var _lastLocationData = MutableStateFlow<LatLng?>(null)
 
-    // Variabili per memorizzare se siano presenti i permessi espliciti per l'uso della posizione
-    //da parte dell'utente
+    /**
+     * Verifica lo stato del permesso dell'utente per la localizzazione in ForeGround
+     * */
     var hasForeGroundPermission = MutableStateFlow(getForeGroundPermissionStatus())
         private set
+    /**
+     * Verifica lo stato del permesso dell'utente per la localizzazione in BackGround
+     * */
     var hasBackGroundPermission = MutableStateFlow(getBackGroundPermissionStatus())
         private set
+    /**
+     * Verifica lo stato del permesso dell'utente per l'invio di notifiche
+     * */
     var hasNotificationPermission = MutableStateFlow(getNotificationPermissionStatus())
         private set
 
-    //variabile per tenere traccia dello stato di tracciamennto: attivo o meno
+    /**
+     * traccia lo stato di tracciamennto: `attivo -> true`, `spento -> false`
+     */
     var isTracking = MutableStateFlow(false)
 
-    // Identificativo del percorso odierno, necessario per le operazioni sui dati raccolti
-    // quali la rappresentazione a schermo ed il loro salvataggio
+    /**
+     * Identificativo del percorso odierno, necessario per le operazioni sui dati raccolti
+     * quali la rappresentazione a schermo ed il loro salvataggio
+     */
     private var todayPathId: MutableStateFlow<Int> = historyViewModel.todayId
 
     // riferimenti a repository e Dao per le operazioni sui dati
@@ -57,19 +78,36 @@ class LocationViewModel(
         context = context, locationViewModel = this, dao = pathDataDao!!
     )
 
-    // contenitore per i dati raccolti dal Repository.
-    // Continene un lista di PathData?
+    /**
+     * contiene la lista di `PathData` (`List<PathData?>`) ricevuta dal database in seguito ad una richiesta di fetch
+     * @see PathData
+     */
     var fetchedLocationData = locationRepository.fetchedData
         private set
 
-    // supporta il precedente in caso sia necessario confrontare più percorsi in parallelo
+    /**
+     * supporta il `fetchedLocationData` in caso sia necessario confrontare più percorsi in parallelo
+     * @see fetchedLocationData
+     * */
     var fetchedLocationData2 = locationRepository.fetchedData2
         private set
 
+    /**
+     * indica se i dati in `fetchedLocationData` sono validi o meno
+     * @see fetchedLocationData
+     * */
     val locationDataReady = locationRepository.locationDataReady
+
+    /**
+     * indica se i dati in `fetchedLocationData2` sono validi o meno
+     * @see `fetchedLocationData2`
+     * */
     val location2DataReady = locationRepository.location2DataReady
 
-    // variabile che rappresenta la differenza tra due percorsi
+    /**
+     * contiene la differenza calcolata tra due percorsi nel metodo `comparePaths`
+     * @see comparePaths
+     * */
     var pathDifference = MutableStateFlow<Float>(0f)
         private set
 
@@ -85,8 +123,14 @@ class LocationViewModel(
     var minLng: Double = Double.MAX_VALUE
         private set
 
-    // verifico il corretto caricamento del centro della mappa
+    /**
+     * indica se il calcolo delle coordinate di centro della mappa sia finito o meno
+     * */
     private val _centerReady = MutableStateFlow(false)
+    /**
+     * espone in maniera non modificabile `_centerReady`
+     * @see _centerReady
+     * */
     var centerReady = _centerReady.asStateFlow()
 
 
@@ -95,6 +139,8 @@ class LocationViewModel(
         // letti i valori relativi alle posizioni ottenute dell'utente
         viewModelScope.launch {
             locationRepository.locationFlow.collect { newLocation ->
+
+                // se non ho ancora ottenuto delle locazioni salvo la prima ottenuta in maniera indiscriminata
                 if (_lastLocationData.value == null) {
                     _lastLocationData.value =
                         LatLng(newLocation.latitude, newLocation.longitude)
@@ -192,12 +238,23 @@ class LocationViewModel(
         }
     }
 
+
+    /**
+     * avvio il tracciamente dell'utente da parte dell'applicazione
+     * e modifica il Flow `isTracking`
+     * */
     fun startLocationUpdates() {
         locationRepository.startLocationUpdates()
         isTracking.value = true
         println("start tracking")
     }
 
+    /**
+     * interrompe il tacciamento dell'utente, modifica il flow `isTracking`,
+     * salva i dati raccolti sul db e aggiorna lo stato di `fetchedLocationData`
+     * @see saveDataAndClear
+     * @see fetchedLocationData
+     * */
     fun stopLocationUpdates() {
         saveDataAndClear()
         locationRepository.getPathDataFromPathHistoryId(todayPathId.value)
@@ -206,6 +263,11 @@ class LocationViewModel(
         println("stop Tracking")
     }
 
+    /**
+     * salva le posizioni osservate, aggiorna i valori delle distanze percorse e
+     * imposta i dati registrati alla lista vuota (`_locationData.value = emptyList()`)
+     * @see com.example.betterpath.viewModel.HistoryViewModel.updateDistance
+     * */
     fun saveDataAndClear() {
         if (_locationData.value.isNotEmpty()) {
             locationRepository.saveData(_locationData.value)
@@ -225,7 +287,12 @@ class LocationViewModel(
         locationRepository.getLocation1And2(historyViewModel.checkedBox.value[0], historyViewModel.checkedBox.value[1])
     }
 
-    fun getMaxMinLatLon(locationVals : List<PathData?>){
+    /**
+     * aggiorno i valori di `maxLat`, `minLat`, `maxLng` e `minLng`
+     * in accordo ai valori della lista passata
+     * @param locationVals lista di `PathData` su cui calcolare i valori di massimo e minimo
+     * */
+    fun getMaxMinLatLng(locationVals : List<PathData?>){
         _centerReady.value = false
         viewModelScope.launch {
             withContext(Dispatchers.Default){
@@ -242,6 +309,15 @@ class LocationViewModel(
         }
     }
 
+    /**
+     * richiama `getClusteredList` su due liste di PathData (`fetchedLocationData` e
+     * `fetchedLocationData2`) per ottenere una stima dei percorsi;
+     * imposta il valore di `pathDifference` in accordo ai valori calcolati dalla funzione
+     * `countDifferentPoints`
+     * @see pathDifference
+     * @see countDifferentPoints
+     * @see getClusteredList
+     * */
     fun comparePaths(){
         viewModelScope.launch {
             withContext(Dispatchers.Default){
@@ -253,6 +329,15 @@ class LocationViewModel(
         }
     }
 
+    /**
+     * data una `List<PathData?>` calcola un sottoinsieme di punti raggruppado tutti punti tali che
+     * il troncamento dei valori di latitudine e longitudine sia lo stesso.
+     * Per esempio i punti
+     * (49.072173900444895, 10.664321781015415) e(49.075173900444895, 10.664321781015415)
+     * sono considerati separati ma
+     * (49.072173900444895, 10.664333584255770) e (49.072813355871578, 10.664321781015415)
+     * sono considerati appartenenti allo stesso cluster
+     * */
     private fun getClusteredList(list : List<PathData?>) : Set<LatLng>{
         val clusteredList = mutableSetOf<LatLng>()
         val numericFormat = NumberFormat.getInstance()
@@ -271,6 +356,10 @@ class LocationViewModel(
         return clusteredList
     }
 
+    /**
+     * calcola la differenza tra due insieme di `LatLng` verificando il numero di punti non presenti
+     * nella loro intersezione
+     * */
     private fun countDifferentPoints(set1: Set<LatLng>, set2: Set<LatLng>): Float {
         val allPoints = set1.union(set2)
         val commonPoints = set1.intersect(set2)

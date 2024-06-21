@@ -49,6 +49,10 @@ class LocationRepository(
     val fetchedData2:StateFlow<List<PathData?>> = _fetchedData2.asStateFlow()
     val location2DataReady = MutableStateFlow(false)
 
+    /**
+     * avvia il necessario per la locazione in foreground e background tramite la creazione di una
+     * notifica e indicando al `locationManager` di raccogliere dati ogni 10 secondi utilizzando il GPS
+     * */
     fun startLocationUpdates(){
         if (ActivityCompat.checkSelfPermission(
                 context,

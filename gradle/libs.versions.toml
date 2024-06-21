@@ -4,6 +4,8 @@ coilCompose = "2.2.2"
 coreTesting = "2.1.0"
 datastorePreferencesVersion = "1.1.1"
 firebaseAuthKtx = "23.0.0"
+junitJupiterApi = "5.8.1"
+junitJupiterEngine = "5.8.1"
 kotlin = "1.9.0"
 coreKtx = "1.13.1"
 junit = "4.13.2"
@@ -19,6 +21,7 @@ material = "1.6.8"
 material3 = "1.2.1"
 mockitoCore = "4.11.0"
 mockitoKotlin = "4.0.0"
+mockk = "1.12.0"
 navigationCompose = "2.7.7"
 playServicesAuth = "21.2.0"
 playServicesMapsVersion = "18.2.0"
@@ -65,12 +68,15 @@ androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-man
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junitJupiterApi" }
+junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junitJupiterEngine" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
 maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "mapsCompose" }
 maps-kyx = { module = "com.google.maps.android:maps-kyx", version.ref = "mapsKyx" }
 material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
 mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
 play-services-maps-v1820 = { module = "com.google.android.gms:play-services-maps", version.ref = "playServicesMapsVersion" }
 secrets-gradle-plugin = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }

@@ -83,6 +83,7 @@ dependencies {
     testImplementation(libs.ui.test.junit4)
     testImplementation(libs.junit.junit)
     testImplementation(libs.junit.jupiter)
+    testImplementation(libs.junit.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
@@ -113,6 +114,10 @@ dependencies {
     implementation (libs.androidx.room.runtime)
     testImplementation(libs.androidx.core.testing)
     testImplementation (libs.core.testing)
+    testImplementation (libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testImplementation (libs.mockk)
+
 }
 
 secrets {

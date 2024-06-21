@@ -19,7 +19,7 @@ import kotlin.random.Random
 class HistoryViewModel(database: MyAppDatabase) : ViewModel() {
     //modifiche per Room
     private var pathHistoryDao = database.pathHistoryDao()
-    private val repository : HistoryRepository = HistoryRepository(this, pathHistoryDao!!)
+    val repository : HistoryRepository = HistoryRepository(this, pathHistoryDao!!)
 
     //tengo in memoria i percorsi salvati fino ad ora
     var pathHistory = repository.allPaths
@@ -37,7 +37,7 @@ class HistoryViewModel(database: MyAppDatabase) : ViewModel() {
     // tengo traccia delle date di interesse e edel numero di date selezionate
     var checkedBox = mutableStateOf(arrayOf(-1,-1))
         private set
-    private var numberOfChecked = mutableIntStateOf(0)
+    var numberOfChecked = mutableIntStateOf(0)
 
     //variabile per abilitare o meno la prosecuzione alla pagina di comparazione
     var enableCompareButton = mutableStateOf(false)
@@ -64,7 +64,7 @@ class HistoryViewModel(database: MyAppDatabase) : ViewModel() {
      * @param index l'identificativo associato alla checkbox che si vuole aggiornare
      * @param value valore booleano che indica lo stato della checkBox (true se selezionato,
      *              false altrimenti)
-     * @return booleano per indicare se la casella può essere spuntata o meno
+     * @return booleano per indicare se la casella deve risultare spuntata o meno
      * */
     fun updateCheckedBox(index: Int, value: Boolean): Boolean {
         //inizializzo il valore di ritorno
