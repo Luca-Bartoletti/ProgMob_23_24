@@ -1,6 +1,9 @@
 package com.example.betterpath.composables
 
+import android.content.Context
 import android.content.Intent
+import android.location.LocationManager
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,6 +27,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -72,11 +77,19 @@ fun HomeScreen(
                             locationViewModel.stopLocationUpdates()
 
                         } else {
-                            Intent(context, ForegroundLocation::class.java).also {
-                                it.action = ForegroundLocation.Actions.START.toString()
-                                context.startService(it)
+                            if(locationViewModel.isGpsEnabled()) {
+                                Intent(context, ForegroundLocation::class.java).also {
+                                    it.action = ForegroundLocation.Actions.START.toString()
+                                    context.startService(it)
+                                }
+                                locationViewModel.startLocationUpdates()
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    context.getString(R.string.turn_on_gps),
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
-                            locationViewModel.startLocationUpdates()
                         }
                     },
                     modifier = Modifier

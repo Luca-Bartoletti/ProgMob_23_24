@@ -90,7 +90,7 @@ fun CompareContent(innerPadding : PaddingValues, historyViewModel: HistoryViewMo
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp),
-            text = stringResource(R.string.path_difference)+"${
+            text = stringResource(R.string.path_difference)+" ${
                 String.format(
                     Locale.ITALY,
                     "%.2f",

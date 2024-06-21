@@ -110,6 +110,9 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.mockito.core)
     testImplementation (libs.mockito.kotlin)
+    implementation (libs.androidx.room.runtime)
+    testImplementation(libs.androidx.core.testing)
+    testImplementation (libs.core.testing)
 }
 
 secrets {

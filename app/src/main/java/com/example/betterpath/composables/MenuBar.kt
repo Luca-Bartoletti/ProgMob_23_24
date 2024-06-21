@@ -122,7 +122,7 @@ fun MenuBar(loginViewModel: LoginViewModel, navController: NavController) {
             )
         }
 
-
+        // todo rimuovere
         Button(
             onClick = {
                 navController.navigate("debugRoute")

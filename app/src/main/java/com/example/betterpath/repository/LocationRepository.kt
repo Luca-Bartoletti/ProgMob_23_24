@@ -109,5 +109,4 @@ class LocationRepository(
             location2DataReady.value = true
         }
     }
-
 }
