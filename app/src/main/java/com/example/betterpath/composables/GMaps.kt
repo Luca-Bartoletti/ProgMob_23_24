@@ -6,16 +6,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.example.betterpath.data.PathData
-import com.example.betterpath.viewModel.LocationViewModel
 import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.Dot
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.PatternItem
 import com.google.android.gms.maps.model.RoundCap
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapUiSettings
-import com.google.maps.android.compose.Marker
-import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
 
@@ -52,7 +47,7 @@ fun GMaps(centerLat: Double? = null, centerLng: Double? = null,
         }
     }
     //todo togliere la flag
-    val test = true
+    val test = false
     if (test) {
         GoogleMap(
             modifier = Modifier.fillMaxSize(),

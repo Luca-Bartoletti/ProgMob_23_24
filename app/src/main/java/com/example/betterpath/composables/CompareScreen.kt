@@ -20,11 +20,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,7 +33,6 @@ import com.example.betterpath.viewModel.HistoryViewModel
 import com.example.betterpath.viewModel.LocationViewModel
 import com.example.betterpath.viewModel.LoginViewModel
 import java.util.Locale
-
 
 
 @Composable
@@ -156,7 +151,7 @@ fun CompareContent(innerPadding : PaddingValues, historyViewModel: HistoryViewMo
                     {
                         Text(
                             modifier = Modifier.padding(horizontal = 4.dp),
-                            text = stringResource(R.string.distance) + " : " + path1.value!!.distance
+                            text = stringResource(R.string.distance) + " : " + path1.value!!.distance + "m"
                         )
                     }
                 } ?: CircularProgressIndicator()
@@ -192,7 +187,7 @@ fun CompareContent(innerPadding : PaddingValues, historyViewModel: HistoryViewMo
                     {
                         Text(
                             modifier = Modifier.padding(horizontal = 4.dp),
-                            text = stringResource(R.string.distance) + " : " + path2.value!!.distance
+                            text = stringResource(R.string.distance) + " : " + path2.value!!.distance + "m"
                         )
                     }
                 } ?: CircularProgressIndicator()

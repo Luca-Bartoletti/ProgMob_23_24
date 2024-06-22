@@ -1,10 +1,6 @@
 package com.example.betterpath.viewModel
 
-import android.app.Activity.RESULT_OK
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -12,7 +8,6 @@ import com.example.betterpath.firebase_signIn.GoogleAuthUiClient
 import com.example.betterpath.firebase_signIn.SignInResult
 import com.example.betterpath.firebase_signIn.SignInState
 import com.example.betterpath.repository.PreferenceRepository
-import com.google.android.gms.auth.api.identity.Identity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -72,7 +67,7 @@ class LoginViewModel(private val repository: PreferenceRepository, val googleAut
         ) }
     }
 
-    fun resetGoogleState(){
+    private fun resetGoogleState(){
         _googleLoginState.update{ SignInState() }
     }
 

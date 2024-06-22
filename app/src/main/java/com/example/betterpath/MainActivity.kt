@@ -17,7 +17,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.betterpath.composables.AppNavigation
 import com.example.betterpath.database.MyAppDatabase
 import com.example.betterpath.firebase_signIn.GoogleAuthUiClient
-import com.example.betterpath.repository.HistoryRepository
 import com.example.betterpath.repository.PreferenceRepository
 import com.example.betterpath.ui.theme.BetterPathTheme
 import com.example.betterpath.viewModel.HistoryViewModel

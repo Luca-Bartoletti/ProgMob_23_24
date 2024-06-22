@@ -5,16 +5,12 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.betterpath.data.PathData
-import com.example.betterpath.data.PathHistory
 import com.example.betterpath.database.MyAppDatabase
 import com.example.betterpath.repository.HistoryRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.time.LocalDate
-import kotlin.random.Random
 
 class HistoryViewModel(database: MyAppDatabase) : ViewModel() {
     //modifiche per Room
