@@ -44,7 +44,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val database = MyAppDatabase.getDatabase(this)
             this.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-            BetterPathTheme(darkTheme = false) {
+            BetterPathTheme {
 
                 val historyViewModel : HistoryViewModel by viewModels{
                     object : ViewModelProvider.Factory {

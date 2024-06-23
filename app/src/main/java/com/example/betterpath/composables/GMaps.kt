@@ -1,10 +1,12 @@
 package com.example.betterpath.composables
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import com.example.betterpath.data.PathData
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -25,6 +27,7 @@ fun GMaps(centerLat: Double? = null, centerLng: Double? = null,
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(center, 15f)
     }
+    LocalContext.current
 
     val pointList1 = mutableListOf<MutableList<LatLng>>()
     val pointList2 = mutableListOf<MutableList<LatLng>>()
@@ -47,17 +50,18 @@ fun GMaps(centerLat: Double? = null, centerLng: Double? = null,
         }
     }
     //todo togliere la flag
-    val test = false
+    val test = true
     if (test) {
+        isSystemInDarkTheme()
         GoogleMap(
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState,
-            uiSettings = MapUiSettings(compassEnabled = false, zoomControlsEnabled = false)
+            uiSettings = MapUiSettings(compassEnabled = false, zoomControlsEnabled = false),
         ) {
             for (list in pointList1) {
                 MyPolyline(
                     pointList = list,
-                    color = Color.Blue
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
                 if (numberOfPath == 2) {
@@ -65,9 +69,10 @@ fun GMaps(centerLat: Double? = null, centerLng: Double? = null,
                     println("points2.size = ${points2.size}")
                     MyPolyline(
                         pointList = list,
-                        color = MaterialTheme.colorScheme.surface
+                        color = MaterialTheme.colorScheme.secondary
                     )
                 }
+                    println("colore percorso 2 : ${MaterialTheme.colorScheme.tertiary.value}")
             }
         }
     }

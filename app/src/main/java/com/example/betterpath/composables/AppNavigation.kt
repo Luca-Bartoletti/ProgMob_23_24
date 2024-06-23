@@ -13,7 +13,6 @@ import com.example.betterpath.viewModel.LoginViewModel
 fun AppNavigation(historyViewModel: HistoryViewModel, loginViewModel: LoginViewModel, locationViewModel: LocationViewModel){
     val navController  = rememberNavController()
 
-
     NavHost(navController = navController, startDestination = "loadingScreen"){
         navigation(startDestination = "logoScreen", route= "loadingScreen"){
             composable("logoScreen") { LogoScreen(navController = navController, loginViewModel, historyViewModel)}

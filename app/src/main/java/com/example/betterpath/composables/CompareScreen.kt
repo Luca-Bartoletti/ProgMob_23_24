@@ -126,7 +126,7 @@ fun CompareContent(innerPadding : PaddingValues, historyViewModel: HistoryViewMo
             // Percorso 1
             Column(modifier = Modifier
                 .weight(0.45f)
-                .border(1.dp, Color.Black)
+                .border(1.dp, MaterialTheme.colorScheme.onBackground)
             ){
                 path1.value?.let {
                     Row(
@@ -139,7 +139,7 @@ fun CompareContent(innerPadding : PaddingValues, historyViewModel: HistoryViewMo
                             modifier = Modifier.padding(horizontal = 4.dp),
                             imageVector = Icons.Filled.Info,
                             contentDescription = "color of Path 1",
-                            tint = MaterialTheme.colorScheme.secondary,
+                            tint = MaterialTheme.colorScheme.primary,
                         )
                         Text(text = stringResource(R.string.path_date) + " : " + path1.value!!.date)
                     }
@@ -162,7 +162,7 @@ fun CompareContent(innerPadding : PaddingValues, historyViewModel: HistoryViewMo
             // Percorso 2
             Column(modifier = Modifier
                 .weight(0.45f)
-                .border(1.dp, Color.Black)
+                .border(1.dp, MaterialTheme.colorScheme.onBackground)
             ){
                 path2.value?.let {
                     Row(
@@ -174,8 +174,8 @@ fun CompareContent(innerPadding : PaddingValues, historyViewModel: HistoryViewMo
                         Icon(
                             modifier = Modifier.padding(horizontal = 4.dp),
                             imageVector = Icons.Filled.Info,
-                            contentDescription = "Account image",
-                            tint = MaterialTheme.colorScheme.surface,
+                            contentDescription = "path2 color info",
+                            tint = MaterialTheme.colorScheme.secondary,
                         )
                         Text(text = stringResource(R.string.path_date) + " : " + path2.value!!.date)
                     }
