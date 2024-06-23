@@ -1,9 +1,11 @@
 package com.example.betterpath.composables
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -20,14 +22,14 @@ import com.example.betterpath.viewModel.LoginViewModel
 import kotlinx.coroutines.delay
 
 @Composable
-fun LogoScreen(navController : NavController,loginViewModel: LoginViewModel? = null, historyViewModel: HistoryViewModel? = null){
-    
+fun LogoScreen(navController : NavController,loginViewModel: LoginViewModel? = null, historyViewModel: HistoryViewModel? = null) {
+
     loginViewModel?.let {
         val isUserFirstTime by loginViewModel.isFirstTime.collectAsState(initial = true)
-        if(historyViewModel != null && historyViewModel.isFetchedID.collectAsState().value){
+        if (historyViewModel != null && historyViewModel.isFetchedID.collectAsState().value) {
             LaunchedEffect(Unit) {
                 delay(1500)
-                navController.navigate(if (isUserFirstTime) "onboardingRoute" else "mainRoute"){
+                navController.navigate(if (isUserFirstTime) "onboardingRoute" else "mainRoute") {
                     popUpTo("logoScreen") {
                         inclusive = true
                     }
@@ -35,21 +37,28 @@ fun LogoScreen(navController : NavController,loginViewModel: LoginViewModel? = n
             }
         }
     }
-
-    Column (
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(64.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+            .background(MaterialTheme.colorScheme.background)
     ) {
 
-        CircleImage(
-            resource = R.drawable.logo_ia,
-            contentDescription = LocalContext.current.getString(R.string.application_logo),
-            onClickAction = {},
-            enableOnClick = false
-        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(64.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            CircleImage(
+                resource = R.drawable.logo_ia,
+                contentDescription = LocalContext.current.getString(R.string.application_logo),
+                onClickAction = {},
+                enableOnClick = false
+            )
+        }
     }
 }
 

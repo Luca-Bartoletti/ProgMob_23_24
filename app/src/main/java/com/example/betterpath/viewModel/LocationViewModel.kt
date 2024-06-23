@@ -2,6 +2,7 @@ package com.example.betterpath.viewModel
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
@@ -11,9 +12,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.betterpath.data.PathData
 import com.example.betterpath.database.MyAppDatabase
+import com.example.betterpath.foreground.ForegroundLocation
 import com.example.betterpath.repository.LocationRepository
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -108,7 +111,7 @@ class LocationViewModel(
      * contiene la differenza calcolata tra due percorsi nel metodo `comparePaths`
      * @see comparePaths
      * */
-    var pathDifference = MutableStateFlow<Float>(0f)
+    var pathDifference = MutableStateFlow(0f)
         private set
 
 
@@ -180,6 +183,19 @@ class LocationViewModel(
                 }
             }
         }
+
+        viewModelScope.launch {
+            while (true) {
+                // ripeto ogni 30 minuti
+                delay(30 * 60 * 1000L)
+                if (isTracking.value) {
+                    // fermo temporaneamente la regisrazione dei dati, salvo  e riprendo
+                    stopLocationUpdates()
+                    startLocationUpdates(context)
+                    println(">>>>>> dati salvati dopo 30 min!")
+                }
+            }
+        }
     }
 
     private fun getForeGroundPermissionStatus(): Boolean {
@@ -243,10 +259,15 @@ class LocationViewModel(
      * avvio il tracciamente dell'utente da parte dell'applicazione
      * e modifica il Flow `isTracking`
      * */
-    fun startLocationUpdates() {
+    fun startLocationUpdates(context: Context) {
+        Intent(context, ForegroundLocation::class.java).also {
+            it.action = ForegroundLocation.Actions.START.toString()
+            context.startService(it)
+        }
         locationRepository.startLocationUpdates()
         isTracking.value = true
         println("start tracking")
+
     }
 
     /**
@@ -255,7 +276,14 @@ class LocationViewModel(
      * @see saveDataAndClear
      * @see fetchedLocationData
      * */
-    fun stopLocationUpdates() {
+    fun stopLocationUpdates(context : Context? = null) {
+        if (context != null) {
+            // elimino la notifica
+            Intent(context, ForegroundLocation::class.java).also {
+                it.action = ForegroundLocation.Actions.STOP.toString()
+                context.startService(it)
+            }
+        }
         saveDataAndClear()
         locationRepository.getPathDataFromPathHistoryId(todayPathId.value)
         locationRepository.stopLocationUpdates()

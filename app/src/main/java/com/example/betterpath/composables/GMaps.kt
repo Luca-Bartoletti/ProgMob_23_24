@@ -50,7 +50,7 @@ fun GMaps(centerLat: Double? = null, centerLng: Double? = null,
         }
     }
     //todo togliere la flag
-    val test = true
+    val test = false
     if (test) {
         isSystemInDarkTheme()
         GoogleMap(

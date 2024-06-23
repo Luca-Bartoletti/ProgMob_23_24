@@ -1,6 +1,5 @@
 package com.example.betterpath.composables
 
-import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,7 +33,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.betterpath.R
-import com.example.betterpath.foreground.ForegroundLocation
 import com.example.betterpath.viewModel.HistoryViewModel
 import com.example.betterpath.viewModel.LocationViewModel
 import com.example.betterpath.viewModel.LoginViewModel
@@ -66,20 +64,13 @@ fun HomeScreen(
                 LargeFloatingActionButton(
                     onClick = {
                         if (isTracking.value) {
-                            Intent(context, ForegroundLocation::class.java).also {
-                                it.action = ForegroundLocation.Actions.STOP.toString()
-                                context.startService(it)
-                            }
-                            locationViewModel.stopLocationUpdates()
-
+                            // fermo la localizzazione
+                            locationViewModel.stopLocationUpdates(context)
                         } else {
-                            if(locationViewModel.isGpsEnabled()) {
-                                Intent(context, ForegroundLocation::class.java).also {
-                                    it.action = ForegroundLocation.Actions.START.toString()
-                                    context.startService(it)
-                                }
-                                locationViewModel.startLocationUpdates()
-                            } else {
+                            // avvio la localizzazione
+                            if(locationViewModel.isGpsEnabled())
+                                locationViewModel.startLocationUpdates(context)
+                            else {
                                 Toast.makeText(
                                     context,
                                     context.getString(R.string.turn_on_gps),
@@ -100,8 +91,7 @@ fun HomeScreen(
                 ) {
                     if (isTracking.value)
                         findingPosition?.let {
-                            if (findingPosition.isEmpty())  CircularProgressIndicator(modifier = Modifier, Color.Black)
-                            else Icon(Icons.Default.Close, contentDescription = "stop track button")
+                            Icon(Icons.Default.Close, contentDescription = "stop track button")
                         } ?: CircularProgressIndicator(modifier = Modifier, Color.Black)
                     else
                         Icon( Icons.Default.PlayArrow, contentDescription = "play track button")
