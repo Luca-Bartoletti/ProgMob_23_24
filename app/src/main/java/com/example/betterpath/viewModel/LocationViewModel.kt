@@ -192,7 +192,6 @@ class LocationViewModel(
                     // fermo temporaneamente la regisrazione dei dati, salvo  e riprendo
                     stopLocationUpdates()
                     startLocationUpdates(context)
-                    println(">>>>>> dati salvati dopo 30 min!")
                 }
             }
         }
@@ -311,7 +310,6 @@ class LocationViewModel(
     }
 
     fun getLocationData1And2(){
-        println("called getLocationData1And2()")
         locationRepository.getLocation1And2(historyViewModel.checkedBox.value[0], historyViewModel.checkedBox.value[1])
     }
 
@@ -359,14 +357,14 @@ class LocationViewModel(
 
     /**
      * data una `List<PathData?>` calcola un sottoinsieme di punti raggruppado tutti punti tali che
-     * il troncamento dei valori di latitudine e longitudine sia lo stesso.
+     * l'arrotondamento dei valori di latitudine e longitudine sia lo stesso.
      * Per esempio i punti
-     * (49.072173900444895, 10.664321781015415) e(49.075173900444895, 10.664321781015415)
+     * (49.072173900444895, 10.664321781015415) e (49.075173900444895, 10.664321781015415)
      * sono considerati separati ma
-     * (49.072173900444895, 10.664333584255770) e (49.072813355871578, 10.664321781015415)
+     * (49.072673900444895, 10.664333584255770) e (49.072813355871578, 10.664321781015415)
      * sono considerati appartenenti allo stesso cluster
      * */
-    private fun getClusteredList(list : List<PathData?>) : Set<LatLng>{
+    fun getClusteredList(list : List<PathData?>) : Set<LatLng>{
         val clusteredList = mutableSetOf<LatLng>()
         val numericFormat = NumberFormat.getInstance()
         var roundedLat: Double
@@ -388,10 +386,9 @@ class LocationViewModel(
      * calcola la differenza tra due insieme di `LatLng` verificando il numero di punti non presenti
      * nella loro intersezione
      * */
-    private fun countDifferentPoints(set1: Set<LatLng>, set2: Set<LatLng>): Float {
+    fun countDifferentPoints(set1: Set<LatLng>, set2: Set<LatLng>): Float {
         val allPoints = set1.union(set2)
         val commonPoints = set1.intersect(set2)
-        println("value of difference : ${allPoints.size.toFloat()} - ${commonPoints.size.toFloat()} / ${allPoints.size.toFloat()} = ${(allPoints.size.toFloat() - commonPoints.size.toFloat())/allPoints.size.toFloat()}")
         return if (allPoints.isEmpty()) 1f else (allPoints.size.toFloat() - commonPoints.size.toFloat())/allPoints.size.toFloat()
     }
 

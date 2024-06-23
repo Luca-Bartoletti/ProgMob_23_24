@@ -35,12 +35,10 @@ class HistoryRepository(private val historyViewModel: HistoryViewModel, private 
                             date = today
                         )
                     )
-                    println("todayPathID =  ${todayID.value} -- todayPath.value = ${todayPath.value}")
                     todayID.value = dao.getPathIdFromDate(today)
                 }
             }
             fetchedID.value = true
-            println("fetchedID : ${fetchedID.value}")
         }
     }
 
