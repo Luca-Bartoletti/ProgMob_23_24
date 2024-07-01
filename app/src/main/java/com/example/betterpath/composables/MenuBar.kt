@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -111,15 +110,15 @@ fun MenuBar(loginViewModel: LoginViewModel, navController: NavController) {
         }
 
         // todo rimuovere
-        Button(
-            onClick = {
-                navController.navigate("debugRoute")
-                loginViewModel.closeMenu()
-            },
-            //modifier = Modifier.padding(start = 8.dp),
-        ) {
-            Text(text = "DEBUG")
-        }
+//        Button(
+//            onClick = {
+//                navController.navigate("debugRoute")
+//                loginViewModel.closeMenu()
+//            },
+//            //modifier = Modifier.padding(start = 8.dp),
+//        ) {
+//            Text(text = "DEBUG")
+//        }
 
     }
 

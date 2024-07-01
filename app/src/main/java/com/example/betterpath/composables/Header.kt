@@ -82,13 +82,16 @@ fun Header(context: Context = LocalContext.current,
                     resource = R.drawable.logo_ia,
                     contentDescription = context.getString(R.string.application_logo),
                     onClickAction = {
-//                        if(backstackEntry?.route != "permissionsScreen") {
-//                            navController.navigate("homeScreen") {
-//                                popUpTo("home") {
-//                                    inclusive = false
+                        if(backstackEntry?.route != "permissionsScreen" && backstackEntry?.route != "loginScreen") {
+                            navController.navigate("mainRoute") {
+                                navController.popBackStack("mainScreen", inclusive = true)
+//                                if (backstackEntry?.route != null) {
+//                                    popUpTo(backstackEntry.route!!) {
+//                                        inclusive = true
+//                                    }
 //                                }
-//                            }
-//                        }
+                            }
+                        }
                     }
                 )
             }
@@ -103,9 +106,9 @@ fun CircleImage(resource: Int, contentDescription: String?, onClickAction: () ->
         contentScale = ContentScale.Fit,
         modifier = if (enableOnClick)
             Modifier
-            .padding(top = 8.dp, end = 8.dp, bottom = 8.dp)
-            .clip(CircleShape)
-            .clickable(onClick = onClickAction)
+                .padding(top = 8.dp, end = 8.dp, bottom = 8.dp)
+                .clip(CircleShape)
+                .clickable(onClick = onClickAction)
         else
             Modifier
                 .padding(top = 8.dp, end = 8.dp, bottom = 8.dp)

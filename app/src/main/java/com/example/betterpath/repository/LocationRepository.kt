@@ -79,7 +79,8 @@ class LocationRepository(
         locationViewModel.viewModelScope.launch {
             val insertList = mutableListOf<PathData>()
             for (value in values) value?.let { insertList += value }
-            insertList[insertList.size-1].startStop = 3
+            if(insertList.size > 1)
+                insertList[insertList.size-1].startStop = 3
             withContext(Dispatchers.IO) {
                 dao.insertAll(insertList)
             }

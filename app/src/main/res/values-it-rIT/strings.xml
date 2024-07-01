@@ -23,4 +23,6 @@
     <string name="no_data_today">Non ci sono dati sui tuoi spostamenti di oggi. Perché non andare a fare due passi? Non dimenticarti di premere il bottone prima di partire!</string>
     <string name="path_difference">Percorsi diversi per il</string>
     <string name="turn_on_gps">Attiva il GPS per iniziare a tracciare la tua posizione</string>
+    <string name="end_of_tracking">Fine del tracciamento</string>
+    <string name="end_of_tracking_ConInfo">L\'applicazione ha smesso di tracciare la tua posizione</string>
 </resources>

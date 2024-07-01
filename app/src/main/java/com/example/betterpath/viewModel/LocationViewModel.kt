@@ -136,6 +136,7 @@ class LocationViewModel(
      * */
     var centerReady = _centerReady.asStateFlow()
 
+    private var readyToGo = true
 
     init {
         // dalla creazione di LocationViewModel fino alla sua distruzione vengono costantemente
@@ -144,30 +145,10 @@ class LocationViewModel(
             locationRepository.locationFlow.collect { newLocation ->
 
                 // se non ho ancora ottenuto delle locazioni salvo la prima ottenuta in maniera indiscriminata
-                if (_lastLocationData.value == null) {
-                    _lastLocationData.value =
-                        LatLng(newLocation.latitude, newLocation.longitude)
-                    _locationData.value += PathData(
-                        lat = newLocation.latitude,
-                        lng = newLocation.longitude,
-                        time = newLocation.time,
-                        pathHistoryId = todayPathId.value,
-                        // 1 -> start
-                        // 2 -> onGoning
-                        // 3 -> stop
-                        startStop = 1
-                    )
-                } else {
-                    val results = FloatArray(1)
-                    // Calcolo la distanza tra il punto precedente e quello attuale.
-                    // Non salvo solo se non mi sono mosso abbastanza.
-                    // In questo modo non salvo posizioni superflue
-                    Location.distanceBetween(
-                        _lastLocationData.value!!.latitude, _lastLocationData.value!!.longitude,
-                        newLocation.latitude, newLocation.longitude,
-                        results
-                    )
-                    if (results[0] >= 7) {
+                if(readyToGo) {
+                    if (_lastLocationData.value == null) {
+                        _lastLocationData.value =
+                            LatLng(newLocation.latitude, newLocation.longitude)
                         _locationData.value += PathData(
                             lat = newLocation.latitude,
                             lng = newLocation.longitude,
@@ -176,9 +157,32 @@ class LocationViewModel(
                             // 1 -> start
                             // 2 -> onGoning
                             // 3 -> stop
-                            startStop = 2
+                            startStop = 1
                         )
-                        _lastLocationData.value = LatLng(newLocation.latitude, newLocation.longitude)
+                    } else {
+                        val results = FloatArray(1)
+                        // Calcolo la distanza tra il punto precedente e quello attuale.
+                        // Non salvo solo se non mi sono mosso abbastanza.
+                        // In questo modo non salvo posizioni superflue
+                        Location.distanceBetween(
+                            _lastLocationData.value!!.latitude, _lastLocationData.value!!.longitude,
+                            newLocation.latitude, newLocation.longitude,
+                            results
+                        )
+                        if (results[0] >= 7) {
+                            _locationData.value += PathData(
+                                lat = newLocation.latitude,
+                                lng = newLocation.longitude,
+                                time = newLocation.time,
+                                pathHistoryId = todayPathId.value,
+                                // 1 -> start
+                                // 2 -> onGoning
+                                // 3 -> stop
+                                startStop = 2
+                            )
+                            _lastLocationData.value =
+                                LatLng(newLocation.latitude, newLocation.longitude)
+                        }
                     }
                 }
             }
@@ -187,11 +191,12 @@ class LocationViewModel(
         viewModelScope.launch {
             while (true) {
                 // ripeto ogni 30 minuti
-                delay(30 * 60 * 1000L)
+                delay(10 * 60 * 1000L)
                 if (isTracking.value) {
-                    // fermo temporaneamente la regisrazione dei dati, salvo  e riprendo
-                    stopLocationUpdates()
-                    startLocationUpdates(context)
+                    println("saveData")
+                    // salvo  i dati
+                    saveDataAndClear(isBetween = true)
+                    locationRepository.getPathDataFromPathHistoryId(todayPathId.value)
                 }
             }
         }
@@ -295,12 +300,19 @@ class LocationViewModel(
      * imposta i dati registrati alla lista vuota (`_locationData.value = emptyList()`)
      * @see com.example.betterpath.viewModel.HistoryViewModel.updateDistance
      * */
-    fun saveDataAndClear() {
+    fun saveDataAndClear(isBetween : Boolean = false) {
+        readyToGo = false;
         if (_locationData.value.isNotEmpty()) {
+            val last = _locationData.value[_locationData.value.size-1]
             locationRepository.saveData(_locationData.value)
             historyViewModel.updateDistance(_locationData.value)
             _locationData.value = emptyList()
+            if (isBetween) {
+                last?.startStop = 1
+                _locationData.value += last
+            }
         }
+        readyToGo = true;
     }
 
     fun getTodayPathData(){

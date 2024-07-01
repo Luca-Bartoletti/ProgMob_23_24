@@ -29,6 +29,7 @@ class ForegroundLocation : Service() {
             .setSmallIcon(R.drawable.logo_ia)
             .setContentTitle(getString(R.string.localization_is_active))
             .setContentInfo("")
+            .setAutoCancel(false)
             .build()
 
         // id necessariao per aggiornare la notifica senza crearne una nuova
@@ -38,7 +39,13 @@ class ForegroundLocation : Service() {
     }
 
     private fun stop(){
+        val notification = NotificationCompat.Builder(this, "better_path_channel")
+            .setSmallIcon(R.drawable.logo_ia)
+            .setContentTitle(getString(R.string.end_of_tracking))
+            .setContentInfo(getString(R.string.end_of_tracking_ConInfo))
+            .setAutoCancel(false)
+            .build()
+        startForeground(1, notification)
         stopSelf()
     }
-
 }

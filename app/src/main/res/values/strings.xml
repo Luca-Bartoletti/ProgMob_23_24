@@ -23,4 +23,6 @@
     <string name="no_data_today">There are no data about today\'s movement. Let\'s take a walk! And do not forget to press the start button below!</string>
     <string name="path_difference">"The paths are different for the "</string>
     <string name="turn_on_gps">Turn on GPS to start traking your location</string>
+    <string name="end_of_tracking">End of tracking</string>
+    <string name="end_of_tracking_ConInfo">The application stopped to track your location</string>
 </resources>
