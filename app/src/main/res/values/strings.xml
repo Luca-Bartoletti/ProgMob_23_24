@@ -8,7 +8,7 @@
     <string name="login_with_google">Login with Google</string>
     <string name="history">History</string>
     <string name="home">Home</string>
-    <string name="offline_note">If you chose to proceed offline you will be abel to login with your Google account every time in the future. This choice will not affect your experience with the app.</string>
+    <string name="offline_note">If you chose to proceed offline you will be able to login with your Google account every time in the future. This choice will not affect your experience with the app.</string>
     <string name="compare">Compare</string>
     <string name="path_info_date">Date</string>
     <string name="path_info_distance">Distance</string>
